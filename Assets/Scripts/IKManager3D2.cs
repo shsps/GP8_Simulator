@@ -8,7 +8,9 @@ public class IKManager3D2 : MonoBehaviour
 {
     public int ChainLength = 2;
 
+    [Tooltip("For free mode")]
     public Transform Target;
+    [Tooltip("For free mode")]
     public Transform Pole;
 
     /// <summary>
@@ -49,8 +51,6 @@ public class IKManager3D2 : MonoBehaviour
     protected Quaternion[] StartRotationBone;
     protected Quaternion StartRotationTarget;
     protected Quaternion startRotationRoot;
-    public GameObject ControllButton;
-    private ButtonStatus[] buttons;
 
     private void Awake()
     {
@@ -93,12 +93,6 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[0] = Vector3.Distance(xjoints[0].transform.position, xjoints[1].transform.position);
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
-
-        /*buttons = new ButtonStatus[ControllButton.transform.childCount];
-        for (int i = 0; i < ControllButton.transform.childCount; i++)
-        {
-            buttons[i] = ControllButton.transform.GetChild(i).GetComponent<ButtonStatus>();
-        }*/
     }
 
     private void LateUpdate()
@@ -281,27 +275,31 @@ public class IKManager3D2 : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Move tool by WASD
+    /// </summary>
     private void MoveTool()
     {
-        /*if (preMode != OperationMode.MoveTool) init_MoveTool();
+        if (preMode != OperationMode.MoveTool) init_MoveTool();
 
-        if(buttons[1].isClicked || Input.GetKeyDown(KeyCode.A))
+        if(Input.GetKeyDown(KeyCode.A))
         {
             MoveToolHorizon(Time.deltaTime * GetJointFromName('L').RotateSpeed);
         }
-        else if(buttons[0].isClicked)
+        else if(Input.GetKeyDown(KeyCode.D))
         {
             MoveToolHorizon(-Time.deltaTime * GetJointFromName('L').RotateSpeed);
         }
 
-        if(buttons[5].isClicked || Input.GetKeyDown(KeyCode.S))
+        if(Input.GetKeyDown(KeyCode.S))
         {
             MoveToolVertical(-Time.deltaTime * GetJointFromName('U').RotateSpeed);
         }
-        else if(buttons[4].isClicked)
+        else if(Input.GetKeyDown(KeyCode.W))
         {
             MoveToolVertical(Time.deltaTime * GetJointFromName('U').RotateSpeed);
-        }*/
+        }
     }
     private void init_MoveTool()
     {
@@ -363,7 +361,6 @@ public class IKManager3D2 : MonoBehaviour
     }
     private void FixedToolDirection()
     {
-        if (preMode != OperationMode.FixedToolDirection) ControllButton.SetActive(false);
         //Vector3 _angle = CaculateAngleToTarget();
 
         Plane yPlane = new Plane(this.transform.up, this.transform.position);
