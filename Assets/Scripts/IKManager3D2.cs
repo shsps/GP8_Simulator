@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using ArrayExtension;
 using UnityEngine.UI;
@@ -52,13 +53,27 @@ public class IKManager3D2 : MonoBehaviour
     protected Quaternion StartRotationTarget;
     protected Quaternion startRotationRoot;
 
+    public IKManager3D2()
+    {
+    }
+
     private void Awake()
     {
         Init();
     }
-
-    public IKManager3D2()
+    private void LateUpdate()
     {
+        //RotateAroundAxisTutorial();
+        /*RotateAroundAxis_ang += Time.deltaTime * 100;
+        Pole.position = Quaternion.Euler(RotateAroundAxis_ang, 0, 0) * new Vector3(4, 0, -4);*/
+        //ResolveIK();
+        RobotArmIK();
+
+        /*foreach (var item in joints)
+        {
+            print($"{item.name} : {item.GetRotateAngleNow()}");
+        }*/
+
     }
 
     private void Init()
@@ -93,15 +108,6 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[0] = Vector3.Distance(xjoints[0].transform.position, xjoints[1].transform.position);
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
-    }
-
-    private void LateUpdate()
-    {
-        //RotateAroundAxisTutorial();
-        /*RotateAroundAxis_ang += Time.deltaTime * 100;
-        Pole.position = Quaternion.Euler(RotateAroundAxis_ang, 0, 0) * new Vector3(4, 0, -4);*/
-        //ResolveIK();
-        RobotArmIK();
     }
 
     private float RotateAroundAxis_ang = 0;
@@ -283,23 +289,34 @@ public class IKManager3D2 : MonoBehaviour
     {
         if (preMode != OperationMode.MoveTool) init_MoveTool();
 
-        if(Input.GetKeyDown(KeyCode.A))
+        if(Input.GetKey(KeyCode.D))
         {
-            MoveToolHorizon(Time.deltaTime * GetJointFromName('L').RotateSpeed);
+            MoveToolHorizon(Time.deltaTime * GetJointFromName('L').RotateSpeed * 0.01f);
         }
-        else if(Input.GetKeyDown(KeyCode.D))
+        else if(Input.GetKey(KeyCode.A))
         {
-            MoveToolHorizon(-Time.deltaTime * GetJointFromName('L').RotateSpeed);
+            MoveToolHorizon(-Time.deltaTime * GetJointFromName('L').RotateSpeed * 0.01f);
         }
 
-        if(Input.GetKeyDown(KeyCode.S))
+        if(Input.GetKey(KeyCode.W))
         {
-            MoveToolVertical(-Time.deltaTime * GetJointFromName('U').RotateSpeed);
+            MoveToolVertical(-Time.deltaTime * GetJointFromName('U').RotateSpeed * 0.05f);
         }
-        else if(Input.GetKeyDown(KeyCode.W))
+        else if(Input.GetKey(KeyCode.S))
         {
-            MoveToolVertical(Time.deltaTime * GetJointFromName('U').RotateSpeed);
+            MoveToolVertical(Time.deltaTime * GetJointFromName('U').RotateSpeed * 0.05f);
         }
+
+        if(Input.GetKey(KeyCode.E))
+        {
+            GetJointFromName('S').Rotate(Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
+        }
+        else if(Input.GetKey(KeyCode.Q))
+        {
+            GetJointFromName('S').Rotate(-Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
+        }
+
+        SearchItemCatchable();
     }
     private void init_MoveTool()
     {
@@ -307,6 +324,13 @@ public class IKManager3D2 : MonoBehaviour
     }
     public void MoveToolHorizon(float angle)
     {
+        //Check is limit
+        float angle_LU2LB = Vector3.SignedAngle(GetVectorFromJoints('L', 'U'), GetVectorFromJoints('L', 'B'), GetJointFromName('L').transform.right);
+        if(angle_LU2LB < 0.5f)
+        {
+            throw new UnityException("Arm is at farest limit");
+        }
+
         Vector3 vector_LE = GetVectorFromJoints('L', 'E');
         float length_LE = vector_LE.magnitude;
         float preLEAngle = Vector3.SignedAngle(Vector3.up, vector_LE, GetJointFromName('L').transform.right);
@@ -465,6 +489,24 @@ public class IKManager3D2 : MonoBehaviour
                 return joints[6];
         }
         throw new UnityException($"There isn't any joint called {name}");
+    }
+
+    private void SearchItemCatchable()
+    {
+        RaycastHit hit;
+        Debug.DrawLine(joints[joints.Length - 1].transform.position,
+                       joints[joints.Length - 1].transform.position + joints[joints.Length - 1].transform.up * 1f, Color.red);
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            if (Physics.Raycast(joints[joints.Length - 1].transform.position, joints[joints.Length - 1].transform.up, out hit, 1f))
+            {
+                if(hit.collider.TryGetComponent<ICatchable>(out ICatchable c))
+                {
+                    if (!c.IsCatching) c.Catch(joints[joints.Length - 1].gameObject);
+                    else c.Release();
+                }
+            }
+        }
     }
 }
 

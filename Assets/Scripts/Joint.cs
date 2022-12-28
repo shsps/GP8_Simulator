@@ -11,13 +11,10 @@ public class Joint : MonoBehaviour
         Y,
         Z
     }
+
     [Header("Joint Detail")]
     [Tooltip("Z means this joint determine the rise and down of end joint")]
     public RotateAxis rotateAxis;
-    public bool XRotate = false;
-    public bool YRotate = false;
-    
-    public bool ZRotate = false;
     [Range(0, 100)]
     public int RotateSpeed = 1;
     [Range(0,360)]
@@ -25,7 +22,7 @@ public class Joint : MonoBehaviour
     [Range(-360, 0)]
     public int NegativeRotateLimit = 0;
 
-
+    [Tooltip("Child Joint")]
     public Joint m_child;
     private GameObject MoveAreaPrefab;
     private GameObject MoveArea;
@@ -33,7 +30,7 @@ public class Joint : MonoBehaviour
     private float RotateAngleThreshold = 0.5f;
     private bool isRotating = false;
     private Vector3 startAngle;
-    private float angleNow = 0f;
+    public float angleNow { get; private set; } = 0f;
     private Vector3 rotatingAxis = Vector3.zero;
     /*protected enum RotateDirection : short
     {
@@ -43,9 +40,11 @@ public class Joint : MonoBehaviour
     RotateDirection rotateDirection = RotateDirection.Clockwise;*/
     private Vector3 preTargetPosition = Vector3.zero;
     private Quaternion preRotation;
+    private Quaternion oriRotation;
 
-    private void Awake()
+    private void OnEnable()
     {
+        oriRotation = this.transform.localRotation;
         if(m_child != null)
         {
             RotateRadius = GetDistanceToChild();
@@ -111,6 +110,7 @@ public class Joint : MonoBehaviour
     {
         //print(angle);
         //print($"{this.name} rotate : {angle}");
+        CheckIsLimit(angle);
         preRotation = this.transform.rotation;
         switch(rotateAxis)
         {
@@ -120,10 +120,13 @@ public class Joint : MonoBehaviour
                 this.transform.Rotate(new Vector3(angle, 0, 0));
                 break;
             case RotateAxis.Y:
+                this.transform.Rotate(new Vector3(0, angle, 0));
                 break;
             case RotateAxis.Z:
+                this.transform.Rotate(new Vector3(0, 0, angle));
                 break;
         }
+        angleNow += angle;
     }
 
     public void Rotate(Vector3 angle)
@@ -206,9 +209,15 @@ public class Joint : MonoBehaviour
         isRotating = true;
     }
 
-    public void Rotate(float angle, Vector3 axis)
+    public void CheckIsLimit(float angle)
     {
-        preRotation = this.transform.rotation;
-
+        if(angle > 0 && (Mathf.Abs(PositiveRotateLimit - angleNow) < 0.1))
+        {
+            throw new UnityException($"{this.name}'s positive angle has reached limit");
+        }
+        else if(angle < 0 && (Mathf.Abs(NegativeRotateLimit - angleNow) < 0.1))
+        {
+            throw new UnityException($"{this.name}'s negative angle has reached limit");
+        }
     }
 }

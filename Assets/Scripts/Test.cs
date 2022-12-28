@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Test : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class Test : MonoBehaviour
 {
     void Start()
     {
@@ -12,15 +12,6 @@ public class Test : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     // Update is called once per frame
     void Update()
     {
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        print(this.name + " be clidked");
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        print(this.name + " up");
+        this.transform.Rotate(new Vector3(0, 0.01f, 0));
     }
 }
