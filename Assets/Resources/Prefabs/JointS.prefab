@@ -98,9 +98,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 3
-  XRotate: 0
-  YRotate: 0
-  ZRotate: 1
   RotateSpeed: 100
   PositiveRotateLimit: 190
   NegativeRotateLimit: -190
@@ -219,9 +216,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 1
-  XRotate: 1
-  YRotate: 0
-  ZRotate: 0
   RotateSpeed: 10
   PositiveRotateLimit: 190
   NegativeRotateLimit: -70
@@ -341,9 +335,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 2
-  XRotate: 0
-  YRotate: 1
-  ZRotate: 0
   RotateSpeed: 70
   PositiveRotateLimit: 170
   NegativeRotateLimit: -170
@@ -487,9 +478,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 1
-  XRotate: 1
-  YRotate: 0
-  ZRotate: 0
   RotateSpeed: 25
   PositiveRotateLimit: 145
   NegativeRotateLimit: -65
@@ -608,9 +596,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 1
-  XRotate: 1
-  YRotate: 0
-  ZRotate: 0
   RotateSpeed: 100
   PositiveRotateLimit: 135
   NegativeRotateLimit: -135
@@ -1110,9 +1095,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 0
-  XRotate: 0
-  YRotate: 0
-  ZRotate: 0
   RotateSpeed: 100
   PositiveRotateLimit: 0
   NegativeRotateLimit: 0
@@ -1194,7 +1176,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2877106618661759793}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1339,9 +1321,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateAxis: 3
-  XRotate: 0
-  YRotate: 0
-  ZRotate: 1
   RotateSpeed: 100
   PositiveRotateLimit: 360
   NegativeRotateLimit: -360

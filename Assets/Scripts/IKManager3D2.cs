@@ -53,8 +53,19 @@ public class IKManager3D2 : MonoBehaviour
     protected Quaternion StartRotationTarget;
     protected Quaternion startRotationRoot;
 
+    private const float Deg2Rad = Mathf.Deg2Rad;
+    private const float Rad2Deg = Mathf.Rad2Deg;
+
+    private Vector3 oriE;
     public IKManager3D2()
     {
+        /*Plane p = new Plane(Vector3.up, Vector3.zero);
+        Vector3 v1 = new Vector3(0, 2, 2);
+        Vector3 v2 = new Vector3(0, -3, 12);
+        Vector3 deltav = v1 - v2;
+        Vector3 v3 = p.ClosestPointOnPlane(deltav);
+        print(v3);
+        print((v1.magnitude > v2.magnitude) ? v3.magnitude : -v3.magnitude);*/
     }
 
     private void Awake()
@@ -67,13 +78,8 @@ public class IKManager3D2 : MonoBehaviour
         /*RotateAroundAxis_ang += Time.deltaTime * 100;
         Pole.position = Quaternion.Euler(RotateAroundAxis_ang, 0, 0) * new Vector3(4, 0, -4);*/
         //ResolveIK();
+
         RobotArmIK();
-
-        /*foreach (var item in joints)
-        {
-            print($"{item.name} : {item.GetRotateAngleNow()}");
-        }*/
-
     }
 
     private void Init()
@@ -108,6 +114,8 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[0] = Vector3.Distance(xjoints[0].transform.position, xjoints[1].transform.position);
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
+
+        oriE = GetJointFromName('E').transform.position;
     }
 
     private float RotateAroundAxis_ang = 0;
@@ -291,20 +299,20 @@ public class IKManager3D2 : MonoBehaviour
 
         if(Input.GetKey(KeyCode.D))
         {
-            MoveToolHorizon(Time.deltaTime * GetJointFromName('L').RotateSpeed * 0.01f);
+            MoveToolZ(Time.deltaTime);
         }
         else if(Input.GetKey(KeyCode.A))
         {
-            MoveToolHorizon(-Time.deltaTime * GetJointFromName('L').RotateSpeed * 0.01f);
+            MoveToolZ(-Time.deltaTime);
         }
 
         if(Input.GetKey(KeyCode.W))
         {
-            MoveToolVertical(-Time.deltaTime * GetJointFromName('U').RotateSpeed * 0.05f);
+            MoveToolY(-Time.deltaTime);
         }
         else if(Input.GetKey(KeyCode.S))
         {
-            MoveToolVertical(Time.deltaTime * GetJointFromName('U').RotateSpeed * 0.05f);
+            MoveToolY(Time.deltaTime);
         }
 
         if(Input.GetKey(KeyCode.E))
@@ -316,73 +324,174 @@ public class IKManager3D2 : MonoBehaviour
             GetJointFromName('S').Rotate(-Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
         }
 
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            //MoveToolX(-0.1f);
+            MoveToolX(-Time.deltaTime);
+        }
+        else if(Input.GetKey(KeyCode.F))
+        {
+            MoveToolX(Time.deltaTime);
+        }
+
         SearchItemCatchable();
     }
     private void init_MoveTool()
     {
         /*ControllButton.SetActive(true);*/
     }
-    public void MoveToolHorizon(float angle)
+    public void MoveToolZ(float angle)
     {
-        //Check is limit
-        float angle_LU2LB = Vector3.SignedAngle(GetVectorFromJoints('L', 'U'), GetVectorFromJoints('L', 'B'), GetJointFromName('L').transform.right);
-        if(angle_LU2LB < 0.5f)
-        {
-            throw new UnityException("Arm is at farest limit");
-        }
-
-        Vector3 vector_LE = GetVectorFromJoints('L', 'E');
-        float length_LE = vector_LE.magnitude;
-        float preLEAngle = Vector3.SignedAngle(Vector3.up, vector_LE, GetJointFromName('L').transform.right);
+        Vector3 v1 = GetJointFromName('E').transform.position;
 
         float _LRotateAngle = angle * GetJointFromName('L').RotateSpeed;
-        xjoints[0].Rotate(_LRotateAngle);
+        GetJointFromName('L').Rotate(_LRotateAngle);
+        GetJointFromName('B').Rotate(-_LRotateAngle);
 
-        float _LEAngleNow = Vector3.SignedAngle(Vector3.up, GetVectorFromJoints('L', 'E'), GetJointFromName('L').transform.right);
-        Vector3 vector_UE = GetVectorFromJoints('U', 'E');
-        float length_UE = vector_UE.magnitude;
-        float preUEAngle = Vector3.SignedAngle(Vector3.up, vector_UE, xjoints[1].transform.right);
-        //print("L delta y : " + (length_LE * (Mathf.Cos(_LEAngleNow * Mathf.Deg2Rad) - Mathf.Cos(preLEAngle * Mathf.Deg2Rad))));
-        float _UCosPrime = (-length_LE) / length_UE * (Mathf.Cos(_LEAngleNow * Mathf.Deg2Rad) - Mathf.Cos(preLEAngle * Mathf.Deg2Rad))
-                        + Mathf.Cos(preUEAngle * Mathf.Deg2Rad);
-        float _UAnglePrime = Mathf.Acos(_UCosPrime) * Mathf.Rad2Deg;
-        float _UDeltaAngle = _UAnglePrime - preUEAngle;
-        float yb = GetJointFromName('E').transform.position.y;
-        xjoints[1].Rotate(_UDeltaAngle);
+        Vector3 v2 = GetJointFromName('E').transform.position;
+        float deltaVerticalDistance = -(v2.y - v1.y);
 
-        //print("U delta y : " + (GetJointFromName('E').transform.position.y - yb));
-        //float _UEAngleNow = Vector3.SignedAngle(Vector3.up, GetVectorFromJoints('U', 'E'), GetJointFromName('U').transform.right);
-        float _BDeltaAngle = -(_LRotateAngle + _UDeltaAngle);   
-        xjoints[2].Rotate(_BDeltaAngle);
+        Vector3 vectorUE = GetVectorFromJoints('U', 'E');
+        float lengthUE = vectorUE.magnitude;
+        float thetaPUE = Vector3.SignedAngle(Vector3.up, vectorUE, GetJointFromName('U').transform.right);
 
-        //print(GetJointFromName('B').transform.position.y);
+        Vector3 vectorBE = GetVectorFromJoints('B', 'E');
+        float lengthBE = vectorBE.magnitude;
+        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+
+        float paramentA = deltaVerticalDistance + lengthUE * Mathf.Cos(thetaPUE * Deg2Rad) - lengthBE * Mathf.Cos(thetaPBE * Deg2Rad) + lengthUE - lengthBE * Mathf.Cos((thetaPBE - thetaPUE) * Deg2Rad);
+        float paramentB = -2 * (lengthBE * Mathf.Sin((thetaPBE - thetaPUE) * Deg2Rad));
+        float paramentC = deltaVerticalDistance + lengthUE * Mathf.Cos(thetaPUE * Deg2Rad) - lengthBE * Mathf.Cos(thetaPBE * Deg2Rad) - lengthUE + lengthBE * Mathf.Cos((thetaPBE - thetaPUE) * Deg2Rad);
+
+        (double, double) result = MathfExtension.AX2BXC(paramentA, paramentB, paramentC);
+        double theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
+        double theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
+
+        float thetaNUE = System.Math.Abs(theta1 - thetaPUE) < System.Math.Abs(theta2 - thetaPUE) ? (float)theta1 : (float)theta2;
+        float rotateValue = thetaNUE - thetaPUE;
+
+        GetJointFromName('U').Rotate(rotateValue);
+        GetJointFromName('B').Rotate(-rotateValue);
     }
-    public void MoveToolVertical(float angle)
+
+    public void MoveToolY(float angle)
     {
-        Vector3 vector_UE = GetVectorFromJoints('U', 'E');
-        float length_UE = vector_UE.magnitude;
-        float preUEAngle = Vector3.SignedAngle(Vector3.up, vector_UE, GetJointFromName('U').transform.right);
+        Vector3 v1 = GetJointFromName('E').transform.position;
 
         float _URotateAngle = angle * GetJointFromName('U').RotateSpeed;
         GetJointFromName('U').Rotate(_URotateAngle);
+        GetJointFromName('B').Rotate(-_URotateAngle);
 
-        float _UEAngleNow = Vector3.SignedAngle(Vector3.up, GetVectorFromJoints('U', 'E'), GetJointFromName('U').transform.right);
-        Vector3 vector_LE = GetVectorFromJoints('L', 'E');
-        float length_LE = vector_LE.magnitude;
-        float preLEAngle = Vector3.SignedAngle(Vector3.up, vector_LE, GetJointFromName('L').transform.right);
-        //print("U delta x : " + (length_UE * (Mathf.Sin(_UEAngleNow * Mathf.Deg2Rad) - Mathf.Sin(preUEAngle * Mathf.Deg2Rad))));
-        float _LSinPrime = (-length_UE) / length_LE * (Mathf.Sin(_UEAngleNow * Mathf.Deg2Rad) - Mathf.Sin(preUEAngle * Mathf.Deg2Rad))
-                           + Mathf.Sin(preLEAngle * Mathf.Deg2Rad);
-        float _LAnglePrime = Mathf.Asin(_LSinPrime) * Mathf.Rad2Deg;
-        float _LDeltaAngle = _LAnglePrime - preLEAngle;
-        float zb = GetJointFromName('E').transform.position.z;
-        GetJointFromName('L').Rotate(_LDeltaAngle);
+        Vector3 v2 = GetJointFromName('E').transform.position;
+        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        Vector3 projectV1 = plane.ClosestPointOnPlane(v1);
+        Vector3 projectv2 = plane.ClosestPointOnPlane(v2);
+        float deltaHorizontalDistance = -(projectv2.magnitude > projectV1.magnitude ? Vector3.Distance(projectv2, projectV1) : -Vector3.Distance(projectv2, projectV1));
 
-        //print("L delta x : " + (GetJointFromName('E').transform.position.z - zb));
-        float _BDeltaAngle = -(_URotateAngle + _LDeltaAngle);
-        GetJointFromName('B').Rotate(_BDeltaAngle);
-        //print(GetJointFromName('E').transform.position.z);
+        Vector3 vectorLE = GetVectorFromJoints('L', 'E');
+        float lengthLE = vectorLE.magnitude;
+        //preLE
+        float thetaPLE = Vector3.SignedAngle(Vector3.up, vectorLE, GetJointFromName('L').transform.right);
+
+        Vector3 vectorBE = GetVectorFromJoints('B', 'E');
+        float lengthBE = vectorBE.magnitude;
+        //preBE
+        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+
+        float paramentA = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) - lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
+        float paramentB = (-2 * (lengthLE - lengthBE * Mathf.Cos((thetaPBE - thetaPLE) * Deg2Rad)));
+        float paramentC = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) + lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
+
+        (double, double) result = MathfExtension.AX2BXC(paramentA, paramentB, paramentC);
+
+        double theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
+        double theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
+
+        //choose which result is closer to thetaPLE
+        float thetaNLE = System.Math.Abs(theta1 - thetaPLE) < System.Math.Abs(theta2 - thetaPLE) ? (float)theta1 : (float)theta2;
+        float thetaNBE = thetaPBE - (thetaNLE - thetaPLE);
+
+        float rotateValue = thetaNLE - thetaPLE;
+        GetJointFromName('L').Rotate(rotateValue);
+        GetJointFromName('B').Rotate(-rotateValue);
     }
+
+    public void MoveToolX(float angle)
+    {
+        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        Vector3 project1 = plane.ClosestPointOnPlane(GetJointFromName('E').transform.position);
+        Vector3 project2 = plane.ClosestPointOnPlane(GetJointFromName('S').transform.position);
+        float radiusNow = Vector3.Distance(project1, project2);
+
+        float rotateAngleS = angle * GetJointFromName('S').RotateSpeed;
+        float preAngleT = GetJointFromName('T').angleNow;
+        GetJointFromName('S').Rotate(rotateAngleS);
+        GetJointFromName('T').Rotate(rotateAngleS);
+        float afterAngleT = GetJointFromName('T').angleNow;
+
+        float deltaHorizontalDistance = radiusNow * (Mathf.Cos(preAngleT * Deg2Rad) / Mathf.Cos((afterAngleT + preAngleT) * Deg2Rad) - 1);
+        print($"deltaHorizontalDistance ; {deltaHorizontalDistance}");
+
+        //----------------------------------------------------------------------------
+        Vector3 v1 = GetJointFromName('E').transform.position;
+
+        Vector3 vectorLE = GetVectorFromJoints('L', 'E');
+        float lengthLE = vectorLE.magnitude;
+        //preLE
+        float thetaPLE = Vector3.SignedAngle(Vector3.up, vectorLE, GetJointFromName('L').transform.right);
+
+        Vector3 vectorBE = GetVectorFromJoints('B', 'E');
+        float lengthBE = vectorBE.magnitude;
+        //preBE
+        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+
+        float paramentA = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) - lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
+        float paramentB = (-2 * (lengthLE - lengthBE * Mathf.Cos((thetaPBE - thetaPLE) * Deg2Rad)));
+        float paramentC = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) + lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
+
+        (double, double) result = MathfExtension.AX2BXC(paramentA, paramentB, paramentC);
+
+        double theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
+        double theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
+        print($"theta1 : {theta1}, theta2 : {theta2}");
+
+        //choose which result is closer to thetaPLE
+        float thetaNLE = System.Math.Abs(theta1 - thetaPLE) < System.Math.Abs(theta2 - thetaPLE) ? (float)theta1 : (float)theta2;
+
+        float rotateValue = thetaNLE - thetaPLE;
+        print($"rotation : {rotateValue}");
+        GetJointFromName('L').Rotate(rotateValue);
+        GetJointFromName('B').Rotate(-rotateValue);
+
+        Vector3 v2 = GetJointFromName('E').transform.position;
+        print($"deltaZ : {v2.z - oriE.z}");
+        //-------------------------------------------------------------------------------------------
+
+        /*float deltaVerticalDistance = -(v2.y - v1.y);
+
+        Vector3 vectorUE = GetVectorFromJoints('U', 'E');
+        float lengthUE = vectorUE.magnitude;
+        float thetaPUE = Vector3.SignedAngle(Vector3.up, vectorUE, GetJointFromName('U').transform.right);
+
+        vectorBE = GetVectorFromJoints('B', 'E');
+        lengthBE = vectorBE.magnitude;
+        thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+
+        paramentA = deltaVerticalDistance + lengthUE * Mathf.Cos(thetaPUE * Deg2Rad) - lengthBE * Mathf.Cos(thetaPBE * Deg2Rad) + lengthUE - lengthBE * Mathf.Cos((thetaPBE - thetaPUE) * Deg2Rad);
+        paramentB = -2 * (lengthBE * Mathf.Sin((thetaPBE - thetaPUE) * Deg2Rad));
+        paramentC = deltaVerticalDistance + lengthUE * Mathf.Cos(thetaPUE * Deg2Rad) - lengthBE * Mathf.Cos(thetaPBE * Deg2Rad) - lengthUE + lengthBE * Mathf.Cos((thetaPBE - thetaPUE) * Deg2Rad);
+
+        result = MathfExtension.AX2BXC(paramentA, paramentB, paramentC);
+        theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
+        theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
+
+        float thetaNUE = System.Math.Abs(theta1 - thetaPUE) < System.Math.Abs(theta2 - thetaPUE) ? (float)theta1 : (float)theta2;
+        rotateValue = thetaNUE - thetaPUE;
+
+        GetJointFromName('U').Rotate(rotateValue);
+        GetJointFromName('B').Rotate(-rotateValue);*/
+    }
+
     private void FixedToolDirection()
     {
         //Vector3 _angle = CaculateAngleToTarget();
@@ -494,15 +603,16 @@ public class IKManager3D2 : MonoBehaviour
     private void SearchItemCatchable()
     {
         RaycastHit hit;
-        Debug.DrawLine(joints[joints.Length - 1].transform.position,
-                       joints[joints.Length - 1].transform.position + joints[joints.Length - 1].transform.up * 1f, Color.red);
+        Debug.DrawLine(joints[joints.Length - 2].transform.position,
+                       joints[joints.Length - 1].transform.position, Color.red);
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            if (Physics.Raycast(joints[joints.Length - 1].transform.position, joints[joints.Length - 1].transform.up, out hit, 1f))
+            if (Physics.Raycast(joints[joints.Length - 2].transform.position,
+                joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
             {
                 if(hit.collider.TryGetComponent<ICatchable>(out ICatchable c))
                 {
-                    if (!c.IsCatching) c.Catch(joints[joints.Length - 1].gameObject);
+                    if (!c.IsCatching) c.Catch(joints[joints.Length - 2].gameObject);
                     else c.Release();
                 }
             }
@@ -510,7 +620,7 @@ public class IKManager3D2 : MonoBehaviour
     }
 }
 
-class MathfExtension
+public static class MathfExtension
 {
     public static float AngleConvert(float f)
     {
@@ -524,5 +634,13 @@ class MathfExtension
     public static float Sin(float f)
     {
         return Mathf.Sin(AngleConvert(f));
+    }
+
+    public static (double,double) AX2BXC(float a, float b, float c)
+    {
+        double positive = (-b + Mathf.Sqrt((b * b - 4 * a * c))) / (2 * a);
+        double negative = (-b - Mathf.Sqrt((b * b - 4 * a * c))) / (2 * a);
+
+        return (positive, negative);
     }
 }
