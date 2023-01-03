@@ -1009,7 +1009,6 @@ GameObject:
   - component: {fileID: 2877106618566830819}
   - component: {fileID: 2877106618566830817}
   - component: {fileID: 8827258908608186619}
-  - component: {fileID: 5374226567846893121}
   m_Layer: 0
   m_Name: JointEnd
   m_TagString: Untagged
@@ -1115,19 +1114,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &5374226567846893121
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2877106618566830816}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.5, z: 1.0000005}
-  m_Center: {x: 0, y: 0.53, z: 0}
 --- !u!1 &2877106618661759793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1454,7 +1440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7460209059684724982
 Transform:
   m_ObjectHideFlags: 0
@@ -1549,7 +1535,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4785758422805832271
 Transform:
   m_ObjectHideFlags: 0

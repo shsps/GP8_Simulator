@@ -31,7 +31,6 @@ public class IKManager3D2 : MonoBehaviour
         SingleJoint,
         FreeMode,
         MoveTool,
-        FixedToolDirection
     }
     public OperationMode mode = OperationMode.SingleJoint;
     private OperationMode preMode;
@@ -267,9 +266,6 @@ public class IKManager3D2 : MonoBehaviour
             case OperationMode.MoveTool:
                 MoveTool();
                 break;
-            case OperationMode.FixedToolDirection:
-                FixedToolDirection();
-                break;
         }
         preMode = mode;
     }
@@ -297,13 +293,13 @@ public class IKManager3D2 : MonoBehaviour
     {
         if (preMode != OperationMode.MoveTool) init_MoveTool();
 
-        if(Input.GetKey(KeyCode.D))
+        if(Input.GetKey(KeyCode.Q))
         {
-            MoveToolZ(Time.deltaTime);
+            MoveToolX(-Time.deltaTime);
         }
         else if(Input.GetKey(KeyCode.A))
         {
-            MoveToolZ(-Time.deltaTime);
+            MoveToolX(Time.deltaTime);
         }
 
         if(Input.GetKey(KeyCode.W))
@@ -317,22 +313,23 @@ public class IKManager3D2 : MonoBehaviour
 
         if(Input.GetKey(KeyCode.E))
         {
+            MoveToolZ(Time.deltaTime * 0.5f);
+        }
+        else if(Input.GetKey(KeyCode.D))
+        {
+            MoveToolZ(-Time.deltaTime * 0.5f);
+        }
+
+
+        /*if(Input.GetKey(KeyCode.E))
+        {
             GetJointFromName('S').Rotate(Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
         }
         else if(Input.GetKey(KeyCode.Q))
         {
             GetJointFromName('S').Rotate(-Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
-        }
+        }*/
 
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            //MoveToolX(-0.1f);
-            MoveToolX(-Time.deltaTime);
-        }
-        else if(Input.GetKey(KeyCode.F))
-        {
-            MoveToolX(Time.deltaTime);
-        }
 
         SearchItemCatchable();
     }
@@ -429,10 +426,9 @@ public class IKManager3D2 : MonoBehaviour
         GetJointFromName('T').Rotate(rotateAngleS);
         float afterAngleT = GetJointFromName('T').angleNow;
 
-        float deltaHorizontalDistance = radiusNow * (Mathf.Cos(preAngleT * Deg2Rad) / Mathf.Cos((afterAngleT + preAngleT) * Deg2Rad) - 1);
-        print($"deltaHorizontalDistance ; {deltaHorizontalDistance}");
+        float deltaHorizontalDistance = radiusNow * (Mathf.Cos(preAngleT * Deg2Rad) / Mathf.Cos((afterAngleT) * Deg2Rad) - 1);
 
-        //----------------------------------------------------------------------------
+        //-----------------------Rectification Z-Axis error-----------------------------------------------------
         Vector3 v1 = GetJointFromName('E').transform.position;
 
         Vector3 vectorLE = GetVectorFromJoints('L', 'E');
@@ -453,21 +449,22 @@ public class IKManager3D2 : MonoBehaviour
 
         double theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
         double theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
-        print($"theta1 : {theta1}, theta2 : {theta2}");
+        //print($"theta1 : {theta1}, theta2 : {theta2}");
 
         //choose which result is closer to thetaPLE
         float thetaNLE = System.Math.Abs(theta1 - thetaPLE) < System.Math.Abs(theta2 - thetaPLE) ? (float)theta1 : (float)theta2;
 
         float rotateValue = thetaNLE - thetaPLE;
-        print($"rotation : {rotateValue}");
         GetJointFromName('L').Rotate(rotateValue);
         GetJointFromName('B').Rotate(-rotateValue);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
-        print($"deltaZ : {v2.z - oriE.z}");
-        //-------------------------------------------------------------------------------------------
 
-        /*float deltaVerticalDistance = -(v2.y - v1.y);
+        project1 = plane.ClosestPointOnPlane(v1);
+        project2 = plane.ClosestPointOnPlane(v2);
+        //--------------------------------Rectification Y-Axis error-----------------------------------------------------------
+
+        float deltaVerticalDistance = -(v2.y - v1.y);
 
         Vector3 vectorUE = GetVectorFromJoints('U', 'E');
         float lengthUE = vectorUE.magnitude;
@@ -489,72 +486,10 @@ public class IKManager3D2 : MonoBehaviour
         rotateValue = thetaNUE - thetaPUE;
 
         GetJointFromName('U').Rotate(rotateValue);
-        GetJointFromName('B').Rotate(-rotateValue);*/
+        GetJointFromName('B').Rotate(-rotateValue);
     }
 
-    private void FixedToolDirection()
-    {
-        //Vector3 _angle = CaculateAngleToTarget();
-
-        Plane yPlane = new Plane(this.transform.up, this.transform.position);
-        float yAngle = Vector3.SignedAngle((yPlane.ClosestPointOnPlane(end.transform.position) - yPlane.ClosestPointOnPlane(this.transform.position)),
-                                           (yPlane.ClosestPointOnPlane(Target.transform.position) - yPlane.ClosestPointOnPlane(this.transform.position)), Vector3.up);
-        if(Mathf.Abs(yAngle) > angleThreshold)
-        {
-            yjoints[0].transform.Rotate(new Vector3(0, yAngle, 0));
-        }
-
-        Vector3 bToE = joints[joints.Length - 1].transform.position - joints[joints.Length - 3].transform.position;
-        Vector3 bToT = Target.position - joints[joints.Length - 3].transform.position;
-        Vector3 eToT = Target.position - joints[joints.Length - 1].transform.position;
-        Vector3 lToE = joints[6].transform.position - xjoints[0].transform.position;
-        print("end before : " + joints[6].transform.position.z);
-        print("z now : " + joints[6].transform.position.z);
-        print("z : " + eToT.z);
-        if(Mathf.Abs(eToT.z) > 0.01f)
-        {
-            float angleNow_LToE = Vector3.SignedAngle(Vector3.up, lToE, xjoints[0].transform.right);
-            print("angleNow : " + angleNow_LToE);
-            print("Length : " + lToE.magnitude);
-            float afterAngle = Mathf.Asin((eToT.z + joints[6].transform.position.z)/lToE.magnitude) * Mathf.Rad2Deg;
-            print("afterAngle : " + afterAngle);
-            //print("Cos : " + Mathf.Cos(afterAngle * Mathf.Deg2Rad) * lToE.magnitude);
-            //print("Unity Angle : " + MathfExtension.AngleConvert(Mathf.Acos(eToT.z / lToE.magnitude) *Mathf.Rad2Deg));
-            xjoints[0].Rotate(afterAngle - angleNow_LToE);
-            print("end after: " + joints[6].transform.position.z);
-        }
-        int _dir = 0;
-        if (eToT.y > 0.01) _dir = -1;
-        else if (eToT.y < -0.01) _dir = 1;
-        else _dir = 0;
-        int counter = 0;
-        /*while(Mathf.Abs((Vector3.Distance(xjoints[2].transform.position, Target.position) - BonesLength[2])) > 0.01)
-        {
-            xjoints[1].Rotate(0.01f * _dir);
-            if (Vector3.Distance(xjoints[1].transform.position, Target.position) > (BonesLength[1] + BonesLength[2]))
-            {
-                print("out of range");
-                break;
-            }
-            if (counter++ > 100000)
-            {
-                print("over loop");
-                break;
-            }
-        }
-        //print("1 : " + Vector3.Distance(xjoints[2].transform.position, Target.position));
-        //print("2 : " + BonesLength[2]);
-        xjoints[2].Rotate(Target, true);*/
-
-        //xjoints[2].Rotate(Vector3.SignedAngle(bToE, bToT, xjoints[2].transform.right));
-        //print(Target.position - joints[joints.Length - 1].transform.position);
-        //print(Vector3.SignedAngle(Vector3.up, xjoints[0].transform.up, Vector3.right));
-
-        //xjoints[1].Rotate(new Vector3(-Vector3.SignedAngle(Vector3.up, xjoints[0].transform.up, Vector3.right), 0, 0));
-
-        float xAngle = 0;
-        float zAngle = 0;
-    }
+    
     /// <returns>This Vector3 means how much degrees end joint needs to rotate to Target</returns>
     private Vector3 CaculateAngleToTarget()
     {
@@ -577,6 +512,11 @@ public class IKManager3D2 : MonoBehaviour
         return (_to.transform.position - _from.transform.position);
     }
 
+    /// <summary>
+    /// Joint name needs to end with S,L,U,R,B,T,E
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     private Joint GetJointFromName(char name)
     {
         char _name = char.ToUpper(name);
