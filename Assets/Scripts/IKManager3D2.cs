@@ -44,7 +44,6 @@ public class IKManager3D2 : MonoBehaviour
     public Joint[] zjoints;
     public float[] BonesLength;
     protected float CompleteLength;
-    private float angleThreshold = 0.05f;
     public Transform[] Bones;
     protected Vector3[] Positions;
     protected Vector3[] StartDirectionSucc;
@@ -55,7 +54,6 @@ public class IKManager3D2 : MonoBehaviour
     private const float Deg2Rad = Mathf.Deg2Rad;
     private const float Rad2Deg = Mathf.Rad2Deg;
 
-    private Vector3 oriE;
     public IKManager3D2()
     {
         /*Plane p = new Plane(Vector3.up, Vector3.zero);
@@ -79,6 +77,7 @@ public class IKManager3D2 : MonoBehaviour
         //ResolveIK();
 
         RobotArmIK();
+
     }
 
     private void Init()
@@ -113,8 +112,6 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[0] = Vector3.Distance(xjoints[0].transform.position, xjoints[1].transform.position);
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
-
-        oriE = GetJointFromName('E').transform.position;
     }
 
     private float RotateAroundAxis_ang = 0;
@@ -319,17 +316,6 @@ public class IKManager3D2 : MonoBehaviour
         {
             MoveToolZ(-Time.deltaTime * 0.5f);
         }
-
-
-        /*if(Input.GetKey(KeyCode.E))
-        {
-            GetJointFromName('S').Rotate(Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
-        }
-        else if(Input.GetKey(KeyCode.Q))
-        {
-            GetJointFromName('S').Rotate(-Time.deltaTime * GetJointFromName('S').RotateSpeed * 0.1f);
-        }*/
-
 
         SearchItemCatchable();
     }
