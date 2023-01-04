@@ -325,6 +325,7 @@ public class IKManager3D2 : MonoBehaviour
     }
     public void MoveToolZ(float angle)
     {
+        Plane planeForward = new Plane(GetJointFromName('E').transform.forward, Vector3.zero);
         Vector3 v1 = GetJointFromName('E').transform.position;
 
         float _LRotateAngle = angle * GetJointFromName('L').RotateSpeed;
@@ -332,6 +333,8 @@ public class IKManager3D2 : MonoBehaviour
         GetJointFromName('B').Rotate(-_LRotateAngle);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
+
+        //-----------------------Rectification Y-Axis error-----------------------------------------------------
         float deltaVerticalDistance = -(v2.y - v1.y);
 
         Vector3 vectorUE = GetVectorFromJoints('U', 'E');
@@ -355,6 +358,23 @@ public class IKManager3D2 : MonoBehaviour
 
         GetJointFromName('U').Rotate(rotateValue);
         GetJointFromName('B').Rotate(-rotateValue);
+
+        Vector3 v3 = GetJointFromName('E').transform.position;
+
+        Vector3 project1 = planeForward.ClosestPointOnPlane(v1 - GetJointFromName('S').transform.position);
+        Vector3 project2 = planeForward.ClosestPointOnPlane(v3 - GetJointFromName('S').transform.position);
+        float distance = -1 * (Vector3.Dot((v3 - v1), GetJointFromName('E').transform.right)) > 0 ? Vector3.Distance(project1, project2) : -Vector3.Distance(project1, project2);
+        if (Mathf.Abs(distance) < 0.001) return;
+        print($"delta : {distance}");
+
+        Plane planeY = new Plane(Vector3.up, Vector3.zero);
+        Vector3 project3 = planeY.ClosestPointOnPlane(GetJointFromName('E').transform.position);
+        Vector3 project4 = planeY.ClosestPointOnPlane(GetJointFromName('S').transform.position);
+        float radius = Vector3.Distance(project3, project4);
+        float angleNow = GetJointFromName('T').angleNow;
+        float roateAngleS = Mathf.Asin(distance / radius + Mathf.Sin(angleNow * Deg2Rad)) * Rad2Deg;
+        print($"radius : {radius}, angleNow : {angleNow}, roateAngleS : {roateAngleS}");
+        GetJointFromName('S').Rotate(roateAngleS - angleNow);
     }
 
     public void MoveToolY(float angle)
