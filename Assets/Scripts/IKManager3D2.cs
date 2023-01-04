@@ -551,8 +551,8 @@ public class IKManager3D2 : MonoBehaviour
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
                        joints[joints.Length - 1].transform.position, Color.red);
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
+        /*if(Input.GetKeyDown(KeyCode.Space))
+        {*/
             if (Physics.Raycast(joints[joints.Length - 2].transform.position,
                 joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
             {
@@ -561,7 +561,7 @@ public class IKManager3D2 : MonoBehaviour
                     if (!c.IsCatching) c.Catch(joints[joints.Length - 2].gameObject);
                     else c.Release();
                 }
-            }
+            //}
         }
     }
 }

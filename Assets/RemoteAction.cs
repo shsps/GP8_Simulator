@@ -3,65 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Microsoft.MixedReality.Toolkit.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class RemoteAction : MonoBehaviour
 {
     [SerializeField] GameObject cube;
     [SerializeField] bool tXNegative = false;
-    [SerializeField] private Interactable buttonA;
+    [SerializeField] private PressableButtonHoloLens2 buttonTXN;
+    [SerializeField] private IKManager3D2 ik;
     public Text txt;
     // Start is called before the first frame update
     void Start()
     {
-        
+        /*buttonTXN.ButtonPressed.AddListener(() =>
+            {
+                tXNegative = true;
+                //ik.MoveToolHorizon(0.001f);
+            });
+        buttonTXN.ButtonReleased.AddListener(() =>
+            {
+                tXNegative = false;
+            });*/
     }
 
     // Update is called once per frame
     void Update()
     {
-        //System.Diagnostics.Debug.WriteLine(tXNegative);
-        //Debug.Log(tXNegative);
-        
-        if (tXNegative)
+        /*if(ik == null)
         {
-            GameObject.Find("JointS").SendMessage("MoveToolHorizon", 0.001f);
-        }
-    }
-
-    public void PressingTXN()
-    {
-        tXNegative = true;
-        txt = GameObject.Find("Text").GetComponent<Text>();
-        txt.text = "Start";
-        print("開始");
-    }
-
-    public void ReleaseTXN()
-    {
-        tXNegative = false;
-        txt = GameObject.Find("Text").GetComponent<Text>();
-        txt.text = "Stop";
-        print("放開");
-    }
-
-    public void TranslatePositiveX()
-    {
-        cube.transform.Translate(.0001f, 0, 0);
-    }
-
-    public void TranslateNegativeX()
-    {
-        cube.transform.Translate(-.0001f, 0, 0);
-    }
-
-    public void RotatePositiveX()
-    {
-        cube.transform.Rotate(1, 0, 0);
-    }
-
-    public void RotateNegativeX()
-    {
-        cube.transform.Rotate(-1, 0, 0);
+            ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
+        }*/
+        /*if (/*tXNegative//buttonTXN.IsPressing)
+        {
+            ik.MoveToolZ(0.001f);
+        }*/
     }
 
     public void PrintSomething(string s)
