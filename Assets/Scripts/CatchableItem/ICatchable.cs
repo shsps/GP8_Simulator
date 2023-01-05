@@ -2,11 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ICatchable
+public abstract class Catchable : MonoBehaviour
 {
-    public bool IsCatching { get; set; }
+    public bool IsCatching = false;
 
-    public void Catch(GameObject tool);
+    public Vector3 OriginPosition;
 
-    public void Release();
+    public Quaternion OriginRotation;
+
+    public virtual void SetOrigin()
+    {
+        OriginPosition = this.transform.position;
+        OriginRotation = this.transform.rotation;
+        GetComponent<Rigidbody>().freezeRotation = true;
+    }
+
+    public virtual void Init()
+    {
+        this.transform.position = OriginPosition;
+        this.transform.rotation = OriginRotation;
+    }
+
+    public abstract void Catch(GameObject tool);
+
+    public abstract void Release();
 }

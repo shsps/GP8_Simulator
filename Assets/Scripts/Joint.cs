@@ -60,6 +60,12 @@ public class Joint : MonoBehaviour
             startAngle = this.transform.localEulerAngles;
         }
     }
+
+    public void Init()
+    {
+        angleNow = 0;
+    }
+
     /// <summary>
     /// Get the sum of distance from this joint to end
     /// </summary>

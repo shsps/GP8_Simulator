@@ -54,15 +54,15 @@ public class IKManager3D2 : MonoBehaviour
     private const float Deg2Rad = Mathf.Deg2Rad;
     private const float Rad2Deg = Mathf.Rad2Deg;
 
+    public float MoveToolAngleX = 0;
+    public float MoveToolAngleY = 0;
+    public float MoveToolAngleZ = 0;
+    public bool IsCatchPressed = false;
+    private Quaternion[] originRotation;
+    private Vector3[] originPosition;
+
     public IKManager3D2()
     {
-        /*Plane p = new Plane(Vector3.up, Vector3.zero);
-        Vector3 v1 = new Vector3(0, 2, 2);
-        Vector3 v2 = new Vector3(0, -3, 12);
-        Vector3 deltav = v1 - v2;
-        Vector3 v3 = p.ClosestPointOnPlane(deltav);
-        print(v3);
-        print((v1.magnitude > v2.magnitude) ? v3.magnitude : -v3.magnitude);*/
     }
 
     private void Awake()
@@ -72,12 +72,15 @@ public class IKManager3D2 : MonoBehaviour
     private void LateUpdate()
     {
         //RotateAroundAxisTutorial();
-        /*RotateAroundAxis_ang += Time.deltaTime * 100;
-        Pole.position = Quaternion.Euler(RotateAroundAxis_ang, 0, 0) * new Vector3(4, 0, -4);*/
         //ResolveIK();
 
         RobotArmIK();
 
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            StepManager.instance.AddStep(this);
+            IsCatchPressed = false;
+        }
     }
 
     private void Init()
@@ -112,6 +115,14 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[0] = Vector3.Distance(xjoints[0].transform.position, xjoints[1].transform.position);
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
+        //StepManager.instance.AddStep(this);
+        originRotation = new Quaternion[joints.Length];
+        originPosition = new Vector3[joints.Length];
+        for (int i = 0; i < originRotation.Length; i++)
+        {
+            originRotation[i] = joints[i].transform.rotation;
+            originPosition[i] = joints[i].transform.position;
+        }
     }
 
     private float RotateAroundAxis_ang = 0;
@@ -319,12 +330,22 @@ public class IKManager3D2 : MonoBehaviour
 
         SearchItemCatchable();
     }
-    private void init_MoveTool()
+    public void init_MoveTool()
     {
-        /*ControllButton.SetActive(true);*/
+        for (int i = 0; i < joints.Length; i++)
+        {
+            joints[i].transform.rotation = originRotation[i];
+            joints[i].transform.position = originPosition[i];
+            joints[i].Init();
+        }
+        MoveToolAngleX = 0;
+        MoveToolAngleY = 0;
+        MoveToolAngleZ = 0;
+        IsCatchPressed = false;
     }
     public void MoveToolZ(float angle)
     {
+        MoveToolAngleZ += angle;
         Plane planeForward = new Plane(GetJointFromName('E').transform.forward, Vector3.zero);
         Vector3 v1 = GetJointFromName('E').transform.position;
 
@@ -365,7 +386,6 @@ public class IKManager3D2 : MonoBehaviour
         Vector3 project2 = planeForward.ClosestPointOnPlane(v3 - GetJointFromName('S').transform.position);
         float distance = -1 * (Vector3.Dot((v3 - v1), GetJointFromName('E').transform.right)) > 0 ? Vector3.Distance(project1, project2) : -Vector3.Distance(project1, project2);
         if (Mathf.Abs(distance) < 0.001) return;
-        print($"delta : {distance}");
 
         Plane planeY = new Plane(Vector3.up, Vector3.zero);
         Vector3 project3 = planeY.ClosestPointOnPlane(GetJointFromName('E').transform.position);
@@ -373,12 +393,12 @@ public class IKManager3D2 : MonoBehaviour
         float radius = Vector3.Distance(project3, project4);
         float angleNow = GetJointFromName('T').angleNow;
         float roateAngleS = Mathf.Asin(distance / radius + Mathf.Sin(angleNow * Deg2Rad)) * Rad2Deg;
-        print($"radius : {radius}, angleNow : {angleNow}, roateAngleS : {roateAngleS}");
         GetJointFromName('S').Rotate(roateAngleS - angleNow);
     }
 
     public void MoveToolY(float angle)
     {
+        MoveToolAngleY += angle;
         Vector3 v1 = GetJointFromName('E').transform.position;
 
         float _URotateAngle = angle * GetJointFromName('U').RotateSpeed;
@@ -421,6 +441,7 @@ public class IKManager3D2 : MonoBehaviour
 
     public void MoveToolX(float angle)
     {
+        MoveToolAngleX += angle;
         Plane plane = new Plane(Vector3.up, Vector3.zero);
         Vector3 project1 = plane.ClosestPointOnPlane(GetJointFromName('E').transform.position);
         Vector3 project2 = plane.ClosestPointOnPlane(GetJointFromName('S').transform.position);
@@ -546,23 +567,42 @@ public class IKManager3D2 : MonoBehaviour
         throw new UnityException($"There isn't any joint called {name}");
     }
 
-    public void SearchItemCatchable()
+    public void SearchItemCatchable(bool isKeyRequired = true)
     {
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
                        joints[joints.Length - 1].transform.position, Color.red);
-        /*if(Input.GetKeyDown(KeyCode.Space))
-        {*/
+        if(Input.GetKeyDown(KeyCode.Space) && isKeyRequired)
+        {
             if (Physics.Raycast(joints[joints.Length - 2].transform.position,
                 joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
             {
-                if(hit.collider.TryGetComponent<ICatchable>(out ICatchable c))
+                if(hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
                     if (!c.IsCatching) c.Catch(joints[joints.Length - 2].gameObject);
                     else c.Release();
                 }
-            //}
+                IsCatchPressed = true;
+            }
         }
+        else if(!isKeyRequired)
+        {
+            if (Physics.Raycast(joints[joints.Length - 2].transform.position,
+                    joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
+            {
+                if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
+                {
+                    if (!c.IsCatching) c.Catch(joints[joints.Length - 2].gameObject);
+                    else c.Release();
+                }
+                IsCatchPressed = true;
+            }
+        }
+    }
+
+    public void SearchItemCatchablePressNoNeed()
+    {
+
     }
 }
 
