@@ -28,7 +28,7 @@ public class StepManager : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Z))
         {
@@ -91,7 +91,6 @@ public class StepManager : MonoBehaviour
         float deltaAngleX = stepNow.MoveToolAngleX - stepPre.MoveToolAngleX;
         float deltaAngleY = stepNow.MoveToolAngleY - stepPre.MoveToolAngleY;
         float deltaAngleZ = stepNow.MoveToolAngleZ - stepPre.MoveToolAngleZ;
-        print($"{deltaAngleX}, {deltaAngleY}, {deltaAngleZ}");
         stepNow.ik.MoveToolX(deltaAngleX);
         stepNow.ik.MoveToolY(deltaAngleY);
         stepNow.ik.MoveToolZ(deltaAngleZ);
@@ -152,7 +151,6 @@ public class StepManager : MonoBehaviour
             moveIndex = 1;
             if (stepNow.IsCatchPressed)
             {
-                print("Pressed");
                 stepNow.ik.SearchItemCatchable(false);
             }
             return true;
