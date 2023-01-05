@@ -5,11 +5,12 @@ using Microsoft.MixedReality.Toolkit.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    public PressableButton[] buttonsHoloLens2 = new PressableButton[14];
+    public PressableButton[] buttonsHoloLens2 = new PressableButton[15];
     [SerializeField] private Material[] ms;
     [SerializeField] private Color o;
     [SerializeField] private Color c = Color.green;
     [SerializeField] private IKManager3D2 ik;
+    [SerializeField] private IKManager3D2.OperationMode currentMode;
 
     // Start is called before the first frame update
     void Start()
@@ -24,9 +25,15 @@ public class ButtonManager : MonoBehaviour
             {
                 ButtonPressed(b.GetComponent<MeshRenderer>());//Change Color
                 print(b.GetComponent<MeshRenderer>());
-                if(b.name=="協助")
+                if(b.name=="協助")//Grab
                 {
                     ik.SearchItemCatchable();
+                }
+                if(b.name =="輸入")//Record current info
+                {
+                    currentMode = ik.mode;//Record current mode
+                    print(currentMode);
+                    //Record current position
                 }
             });
             b.ButtonReleased.AddListener(() =>
@@ -46,22 +53,22 @@ public class ButtonManager : MonoBehaviour
                 switch (b.name)
                 {
                     case "L.X+":
-                        ik.MoveToolX(0.001f);
+                        ik.MoveToolX(0.0005f);
                         break;
                     case "L.X-":
-                        ik.MoveToolX(-0.001f);
+                        ik.MoveToolX(-0.0005f);
                         break;
                     case "L.Y+":
-                        ik.MoveToolY(-0.004f);//up
+                        ik.MoveToolY(-0.002f);//up
                         break;
                     case "L.Y-":
-                        ik.MoveToolY(0.004f);//down
+                        ik.MoveToolY(0.002f);//down
                         break;
                     case "L.Z+":
-                        ik.MoveToolZ(0.001f);//forward
+                        ik.MoveToolZ(0.002f);//forward
                         break;
                     case "L.Z-":
-                        ik.MoveToolZ(-0.001f);//back
+                        ik.MoveToolZ(-0.002f);//back
                         break;
                     /*case "R.X+":
 
