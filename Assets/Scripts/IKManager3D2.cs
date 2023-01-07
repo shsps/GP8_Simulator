@@ -82,14 +82,14 @@ public class IKManager3D2 : MonoBehaviour
         RobotArmIK();
 
         
-        if(Input.GetKeyDown(KeyCode.R))//Record point
+        if(Input.GetKeyDown(KeyCode.R) && useKeyboard)//Record point
         {
             StepManager.instance.AddStep(this);
             IsCatchPressed = false;
         }
     }
 
-    private void Init()
+    public void Init()
     {
         root = this.GetComponent<Joint>();
         joints = root.GetAllChild();
@@ -338,7 +338,7 @@ public class IKManager3D2 : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.V))
         {
-            Init();
+            init_MoveTool();
         }
 
         SearchItemCatchable();
