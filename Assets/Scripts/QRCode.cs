@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace QRTracking
 {
@@ -11,6 +12,7 @@ namespace QRTracking
         public Microsoft.MixedReality.QR.QRCode qrCode;
         private GameObject qrCodeCube;
         public GameObject Arm;//自定義手臂
+        //public GameObject qrPosition;//自定義父物件
 
         public float PhysicalSize { get; private set; }
         public string CodeText { get; private set; }
@@ -26,10 +28,14 @@ namespace QRTracking
         private bool launch = false;
         private System.Uri uriResult;
         private long lastTimeStamp = 0;
+        Vector3 v = new Vector3(270, 0, 0);
+        static int a = 0;
+        //public Text debug;
 
         // Use this for initialization
         void Start()
         {
+            a = 0;
             PhysicalSize = 0.1f;
             CodeText = "Dummy";
             if (qrCode == null)
@@ -42,6 +48,8 @@ namespace QRTracking
 
             qrCodeCube = gameObject.transform.Find("Cube").gameObject;
             Arm = gameObject.transform.Find("JointS").gameObject;//prefab內物件
+            //qrPosition = this.gameObject;//自定義父物件
+            //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();//Debug
             QRInfo = gameObject.transform.Find("QRInfo").gameObject;
             QRID = QRInfo.transform.Find("QRID").gameObject.GetComponent<TextMesh>();
             QRNodeID = QRInfo.transform.Find("QRNodeID").gameObject.GetComponent<TextMesh>();
@@ -84,15 +92,23 @@ namespace QRTracking
                 qrCodeCube.transform.localScale = new Vector3(PhysicalSize, PhysicalSize, 0.005f);
                 lastTimeStamp = qrCode.SystemRelativeLastDetectedTime.Ticks;
                 QRInfo.transform.localScale = new Vector3(PhysicalSize/0.2f, PhysicalSize / 0.2f, PhysicalSize / 0.2f);
+                
 
                 if (QRText.text == "50872")
                 {
                     Arm.SetActive(true);
                     Arm.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂位置
                     Arm.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);//機械手臂大小
+                    Arm.GetComponent<IKManager3D2>().Init();
+                    a = 0;
                 }
-
             }
+            if(this.transform.rotation != Quaternion.Euler(v))
+            {
+                this.transform.rotation = Quaternion.Euler(v);
+            }
+            //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();
+            //debug.text = this.transform.rotation.x.ToString() +" "+ this.transform.rotation.y.ToString() +" "+ this.transform.rotation.z.ToString();
         }
 
         // Update is called once per frame
@@ -104,6 +120,12 @@ namespace QRTracking
                 launch = false;
                 LaunchUri();
             }
+            
+            /*if(Arm.transform.rotation!=Quaternion.Euler(v)&&a!=1)//不能鎖y
+            {
+                Arm.transform.rotation = Quaternion.Euler(v);
+                a = 1;
+            }*/
         }
 
         void LaunchUri()

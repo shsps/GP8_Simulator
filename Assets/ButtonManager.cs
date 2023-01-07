@@ -5,7 +5,7 @@ using Microsoft.MixedReality.Toolkit.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    public PressableButton[] buttonsHoloLens2 = new PressableButton[15];
+    public PressableButton[] buttonsHoloLens2 = new PressableButton[16];
     [SerializeField] private Material[] ms;
     [SerializeField] private Color o;
     [SerializeField] private Color c = Color.green;
@@ -15,25 +15,29 @@ public class ButtonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (ik != GameObject.Find("JointS").GetComponent<IKManager3D2>())
-        {
-            ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
-        }
+        
         foreach (PressableButton b in buttonsHoloLens2)
         {
             b.ButtonPressed.AddListener(() =>
             {
                 ButtonPressed(b.GetComponent<MeshRenderer>());//Change Color
                 print(b.GetComponent<MeshRenderer>());
+
+                //Below are only once
                 if(b.name=="協助")//Grab
                 {
-                    ik.SearchItemCatchable();
+                    ik.SearchItemCatchable(false);//Hololens button give false
                 }
                 if(b.name =="輸入")//Record current info
                 {
-                    currentMode = ik.mode;//Record current mode
-                    print(currentMode);
+                    StepManager.instance.AddStep(ik);
+                    ik.IsCatchPressed = false;
                     //Record current position
+                }
+                if(b.name == "清除")
+                {
+                    ik.init_MoveTool();
+                    //Back to the first position
                 }
             });
             b.ButtonReleased.AddListener(() =>
@@ -46,7 +50,11 @@ public class ButtonManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (PressableButton b in buttonsHoloLens2)
+        if (ik != GameObject.Find("JointS").GetComponent<IKManager3D2>())
+        {
+            ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
+        }
+        foreach (PressableButton b in buttonsHoloLens2)//Continue
         {
             if(b.IsPressing)
             {
@@ -88,11 +96,8 @@ public class ButtonManager : MonoBehaviour
                     case "R.Z-":
 
                         break;*/
-                    /*case "協助":
-                        //ik.SearchItemCatchable();//Grab
-                        break;*/
-                    case "輸入":
-                        //Remember
+                    case "測試運轉":
+                        StepManager.instance.MoveNextSlowly();
                         break;
                     default:
                         print(b.name);

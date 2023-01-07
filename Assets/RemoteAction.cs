@@ -25,6 +25,7 @@ public class RemoteAction : MonoBehaviour
             {
                 tXNegative = false;
             });*/
+        txt.text = "X-S- X+S+:沿x軸方向直線移動\nY - L - Y + L +:沿y軸方向直線移動\nZ - U - Z + U +:沿z軸方向直線移動\n協助:夾取物件\n輸入:紀錄當前座標\n測試運轉:依據輸入紀錄順序運行至下個記錄點";
     }
 
     // Update is called once per frame
