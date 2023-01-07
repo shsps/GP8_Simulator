@@ -772,6 +772,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1763445399529143223, guid: aa2339beb8f13e249b45929d0c7c31b8,
+        type: 3}
+      propertyPath: rotateAxis
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7137188970261587536, guid: aa2339beb8f13e249b45929d0c7c31b8,
         type: 3}
       propertyPath: m_Name
@@ -785,7 +790,7 @@ PrefabInstance:
     - target: {fileID: 7860216494758435583, guid: aa2339beb8f13e249b45929d0c7c31b8,
         type: 3}
       propertyPath: RotateSpeed
-      value: 50
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa2339beb8f13e249b45929d0c7c31b8, type: 3}
@@ -810,6 +815,11 @@ PrefabInstance:
         type: 3}
       propertyPath: mode
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2877106617393996368, guid: 771201216206b034595435c8afb2d9b7,
+        type: 3}
+      propertyPath: useKeyboard
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2877106617393996369, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}

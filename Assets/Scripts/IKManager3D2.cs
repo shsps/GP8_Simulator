@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class IKManager3D2 : MonoBehaviour
 {
+    [SerializeField] private bool useKeyboard;
     public int ChainLength = 2;
 
     [Tooltip("For free mode")]
@@ -301,6 +302,8 @@ public class IKManager3D2 : MonoBehaviour
     {
         if (preMode != OperationMode.MoveTool) init_MoveTool();
 
+        if (!useKeyboard) return;
+
         if(Input.GetKey(KeyCode.Q))
         {
             MoveToolX(-Time.deltaTime);
@@ -572,10 +575,11 @@ public class IKManager3D2 : MonoBehaviour
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
                        joints[joints.Length - 1].transform.position, Color.red);
-        if(Input.GetKeyDown(KeyCode.Space) && isKeyRequired)
+
+        Vector3 dir = joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position;
+        if (Input.GetKeyDown(KeyCode.Space) && isKeyRequired)
         {
-            if (Physics.Raycast(joints[joints.Length - 2].transform.position,
-                joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
+            if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
                 if(hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
@@ -587,8 +591,7 @@ public class IKManager3D2 : MonoBehaviour
         }
         else if(!isKeyRequired)
         {
-            if (Physics.Raycast(joints[joints.Length - 2].transform.position,
-                    joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
+            if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
@@ -600,10 +603,6 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
-    public void SearchItemCatchablePressNoNeed()
-    {
-
-    }
 }
 
 public static class MathfExtension

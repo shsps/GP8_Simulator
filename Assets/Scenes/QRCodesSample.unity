@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8220,7 +8220,17 @@ PrefabInstance:
     - target: {fileID: 2877106617393996368, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}
       propertyPath: mode
-      value: 0
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2877106617393996368, guid: 771201216206b034595435c8afb2d9b7,
+        type: 3}
+      propertyPath: useKeyboard
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2877106617393996369, guid: 771201216206b034595435c8afb2d9b7,
+        type: 3}
+      propertyPath: RotateSpeed
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2877106617393996370, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}
@@ -8235,17 +8245,17 @@ PrefabInstance:
     - target: {fileID: 2877106617393996373, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.099999994
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2877106617393996373, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.099999994
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2877106617393996373, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.099999994
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2877106617393996373, guid: 771201216206b034595435c8afb2d9b7,
         type: 3}
@@ -9653,6 +9663,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f917ad8868c066b408a878693db763a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsCatching: 0
+  OriginPosition: {x: 0, y: 0, z: 0}
+  OriginRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!54 &1331052985
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9739,7 +9752,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331052983}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.022, y: -0.043, z: 0.634}
+  m_LocalPosition: {x: -0.022, y: -0.043, z: 0.6442}
   m_LocalScale: {x: 0.08, y: 0.08, z: 0.08}
   m_Children: []
   m_Father: {fileID: 0}
