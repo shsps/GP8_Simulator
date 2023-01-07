@@ -77,7 +77,8 @@ public class IKManager3D2 : MonoBehaviour
 
         RobotArmIK();
 
-        if(Input.GetKeyDown(KeyCode.R))
+        
+        if(Input.GetKeyDown(KeyCode.R))//Record point
         {
             StepManager.instance.AddStep(this);
             IsCatchPressed = false;
