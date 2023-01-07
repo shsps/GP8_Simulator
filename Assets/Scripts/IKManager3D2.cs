@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class IKManager3D2 : MonoBehaviour
 {
+    [SerializeField] private bool useKeyboard;
     public int ChainLength = 2;
 
     [Tooltip("For free mode")]
@@ -39,10 +40,10 @@ public class IKManager3D2 : MonoBehaviour
     protected Joint root;
     protected Joint end;
     public Joint[] joints;
-    public Joint[] xjoints;
-    public Joint[] yjoints;
-    public Joint[] zjoints;
-    public float[] BonesLength;
+    private Joint[] xjoints;
+    private Joint[] yjoints;
+    private Joint[] zjoints;
+    private float[] BonesLength;
     protected float CompleteLength;
     public Transform[] Bones;
     protected Vector3[] Positions;
@@ -54,9 +55,13 @@ public class IKManager3D2 : MonoBehaviour
     private const float Deg2Rad = Mathf.Deg2Rad;
     private const float Rad2Deg = Mathf.Rad2Deg;
 
+    [HideInInspector]
     public float MoveToolAngleX = 0;
+    [HideInInspector]
     public float MoveToolAngleY = 0;
+    [HideInInspector]
     public float MoveToolAngleZ = 0;
+    [HideInInspector]
     public bool IsCatchPressed = false;
     private Quaternion[] originRotation;
     private Vector3[] originPosition;
@@ -77,14 +82,14 @@ public class IKManager3D2 : MonoBehaviour
         RobotArmIK();
 
         
-        if(Input.GetKeyDown(KeyCode.R))//Record point
+        if(Input.GetKeyDown(KeyCode.R) && useKeyboard)//Record point
         {
             StepManager.instance.AddStep(this);
             IsCatchPressed = false;
         }
     }
 
-    private void Init()
+    public void Init()
     {
         root = this.GetComponent<Joint>();
         joints = root.GetAllChild();
@@ -302,6 +307,8 @@ public class IKManager3D2 : MonoBehaviour
     {
         if (preMode != OperationMode.MoveTool) init_MoveTool();
 
+        if (!useKeyboard) return;
+
         if(Input.GetKey(KeyCode.Q))
         {
             MoveToolX(-Time.deltaTime);
@@ -327,6 +334,11 @@ public class IKManager3D2 : MonoBehaviour
         else if(Input.GetKey(KeyCode.D))
         {
             MoveToolZ(-Time.deltaTime * 0.5f);
+        }
+
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            init_MoveTool();
         }
 
         SearchItemCatchable();
@@ -573,10 +585,11 @@ public class IKManager3D2 : MonoBehaviour
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
                        joints[joints.Length - 1].transform.position, Color.red);
-        if(Input.GetKeyDown(KeyCode.Space) && isKeyRequired)
+
+        Vector3 dir = joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position;
+        if (Input.GetKeyDown(KeyCode.Space) && isKeyRequired)
         {
-            if (Physics.Raycast(joints[joints.Length - 2].transform.position,
-                joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
+            if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
                 if(hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
@@ -588,8 +601,7 @@ public class IKManager3D2 : MonoBehaviour
         }
         else if(!isKeyRequired)
         {
-            if (Physics.Raycast(joints[joints.Length - 2].transform.position,
-                    joints[joints.Length - 1].transform.position - joints[joints.Length - 2].transform.position, out hit, 1f))
+            if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
@@ -601,10 +613,6 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
-    public void SearchItemCatchablePressNoNeed()
-    {
-
-    }
 }
 
 public static class MathfExtension

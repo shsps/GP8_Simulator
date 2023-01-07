@@ -12,6 +12,7 @@ public class StepManager : MonoBehaviour
     private int moveIndex = 1;
     private bool isRepeat = false;
     [SerializeField] private Catchable[] catchableItems;
+    [SerializeField] private bool useKeyboard = false;
 
     private void Start()
     {
@@ -30,6 +31,8 @@ public class StepManager : MonoBehaviour
 
     private void Update()
     {
+        if (!useKeyboard) return;
+
         if(Input.GetKeyDown(KeyCode.Z))
         {
             MoveNext();
