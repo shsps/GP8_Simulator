@@ -40,10 +40,10 @@ public class IKManager3D2 : MonoBehaviour
     protected Joint root;
     protected Joint end;
     public Joint[] joints;
-    public Joint[] xjoints;
-    public Joint[] yjoints;
-    public Joint[] zjoints;
-    public float[] BonesLength;
+    private Joint[] xjoints;
+    private Joint[] yjoints;
+    private Joint[] zjoints;
+    private float[] BonesLength;
     protected float CompleteLength;
     public Transform[] Bones;
     protected Vector3[] Positions;
@@ -55,9 +55,13 @@ public class IKManager3D2 : MonoBehaviour
     private const float Deg2Rad = Mathf.Deg2Rad;
     private const float Rad2Deg = Mathf.Rad2Deg;
 
+    [HideInInspector]
     public float MoveToolAngleX = 0;
+    [HideInInspector]
     public float MoveToolAngleY = 0;
+    [HideInInspector]
     public float MoveToolAngleZ = 0;
+    [HideInInspector]
     public bool IsCatchPressed = false;
     private Quaternion[] originRotation;
     private Vector3[] originPosition;
@@ -330,6 +334,11 @@ public class IKManager3D2 : MonoBehaviour
         else if(Input.GetKey(KeyCode.D))
         {
             MoveToolZ(-Time.deltaTime * 0.5f);
+        }
+
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            Init();
         }
 
         SearchItemCatchable();
