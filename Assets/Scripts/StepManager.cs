@@ -103,7 +103,7 @@ public class StepManager : MonoBehaviour
         }
     }
 
-    private void MoveNextSlowly()
+    public void MoveNextSlowly()
     {
         if(step < 0)
         {
