@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Microsoft.MixedReality.Toolkit.UI;
+//using Microsoft.MixedReality.Toolkit.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -10,9 +10,9 @@ public class RemoteAction : MonoBehaviour
 {
     [SerializeField] GameObject cube;
     [SerializeField] bool tXNegative = false;
-    [SerializeField] private PressableButtonHoloLens2 buttonTXN;
+    //[SerializeField] private PressableButtonHoloLens2 buttonTXN;
     [SerializeField] private IKManager3D2 ik;
-    public Text txt;
+    public Text txt,debug;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +43,6 @@ public class RemoteAction : MonoBehaviour
 
     public void PrintSomething(string s)
     {
-        print(s);
+        debug.text = s;
     }
 }

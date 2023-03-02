@@ -12,6 +12,7 @@ namespace QRTracking
         public Microsoft.MixedReality.QR.QRCode qrCode;
         private GameObject qrCodeCube;
         public GameObject Arm;//自定義手臂
+        public GameObject JointRotation;
         //public GameObject qrPosition;//自定義父物件
 
         public float PhysicalSize { get; private set; }
@@ -29,7 +30,7 @@ namespace QRTracking
         private System.Uri uriResult;
         private long lastTimeStamp = 0;
         Vector3 v = new Vector3(270, 0, 0);
-        static int a = 0;
+        public static int a = 0;
         //public Text debug;
 
         // Use this for initialization
@@ -50,6 +51,7 @@ namespace QRTracking
             Arm = gameObject.transform.Find("JointS").gameObject;//prefab內物件
             //qrPosition = this.gameObject;//自定義父物件
             //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();//Debug
+            //JointRotation = gameObject.transform.Find("JointRotation").gameObject;
             QRInfo = gameObject.transform.Find("QRInfo").gameObject;
             QRID = QRInfo.transform.Find("QRID").gameObject.GetComponent<TextMesh>();
             QRNodeID = QRInfo.transform.Find("QRNodeID").gameObject.GetComponent<TextMesh>();
@@ -102,11 +104,19 @@ namespace QRTracking
                     Arm.GetComponent<IKManager3D2>().Init();
                     a = 0;
                 }
+                a = 0;
             }
-            if(this.transform.rotation != Quaternion.Euler(v))
+
+            if(a<=10&&Arm.transform.rotation!=Quaternion.Euler(0,0,0))
+            {
+                Arm.transform.rotation = Quaternion.Euler(0,0,0);
+                a++;
+            }
+            //JointRotation.transform.rotation = Quaternion.Euler(90,0,0);
+            /*if(this.transform.rotation != Quaternion.Euler(v))
             {
                 this.transform.rotation = Quaternion.Euler(v);
-            }
+            }*/
             //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();
             //debug.text = this.transform.rotation.x.ToString() +" "+ this.transform.rotation.y.ToString() +" "+ this.transform.rotation.z.ToString();
         }
