@@ -11,10 +11,11 @@ namespace QRTracking
     {
         public Microsoft.MixedReality.QR.QRCode qrCode;
         private GameObject qrCodeCube;
-        public GameObject Arm;//自定義手臂
+        public GameObject Base/*手臂基座*/,Arm;//自定義手臂
         public GameObject JointRotation;
         //public GameObject qrPosition;//自定義父物件
 
+        public TextMesh ShowError;
         public float PhysicalSize { get; private set; }
         public string CodeText { get; private set; }
 
@@ -48,7 +49,8 @@ namespace QRTracking
             CodeText = qrCode.Data;
 
             qrCodeCube = gameObject.transform.Find("Cube").gameObject;
-            Arm = gameObject.transform.Find("JointS").gameObject;//prefab內物件
+            Base = gameObject.transform.Find("GP8_3D").gameObject;
+            Arm = Base.transform.Find("JointS").gameObject;//prefab內物件
             //qrPosition = this.gameObject;//自定義父物件
             //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();//Debug
             //JointRotation = gameObject.transform.Find("JointRotation").gameObject;
@@ -59,6 +61,8 @@ namespace QRTracking
             QRVersion = QRInfo.transform.Find("QRVersion").gameObject.GetComponent<TextMesh>();
             QRTimeStamp = QRInfo.transform.Find("QRTimeStamp").gameObject.GetComponent<TextMesh>();
             QRSize = QRInfo.transform.Find("QRSize").gameObject.GetComponent<TextMesh>();
+
+            ShowError = QRInfo.transform.Find("ShowError").gameObject.GetComponent<TextMesh>();
 
             QRID.text = "Id:" + qrCode.Id.ToString();
             QRNodeID.text = "NodeId:" + qrCode.SpatialGraphNodeId.ToString();
@@ -94,20 +98,26 @@ namespace QRTracking
                 qrCodeCube.transform.localScale = new Vector3(PhysicalSize, PhysicalSize, 0.005f);
                 lastTimeStamp = qrCode.SystemRelativeLastDetectedTime.Ticks;
                 QRInfo.transform.localScale = new Vector3(PhysicalSize/0.2f, PhysicalSize / 0.2f, PhysicalSize / 0.2f);
-                
+
+                ShowError.text = Base.transform.rotation.eulerAngles.x+" "+ Base.transform.rotation.eulerAngles.y+" "+Base.transform.rotation.eulerAngles.z;
 
                 if (QRText.text == "50872")
                 {
-                    Arm.SetActive(true);
-                    Arm.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂位置
-                    Arm.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);//機械手臂大小
+                    Base.SetActive(true);
+                    Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置
+                    Base.transform.localScale = new Vector3(100, 100, 100);//機械手臂基座大小
+                    Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
                     Arm.GetComponent<IKManager3D2>().Init();
                     a = 0;
                 }
+                //ShowError.text = Base.activeSelf.ToString();
                 a = 0;
             }
 
-            if(a<=10&&Arm.transform.rotation!=Quaternion.Euler(0,0,0))
+            Base.transform.rotation = Quaternion.Euler(0, 0, 0);
+            //Arm.transform.rotation = Quaternion.Euler(0,0,0);
+
+            if((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
                 a++;
