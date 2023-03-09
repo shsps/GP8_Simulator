@@ -99,7 +99,7 @@ namespace QRTracking
                 lastTimeStamp = qrCode.SystemRelativeLastDetectedTime.Ticks;
                 QRInfo.transform.localScale = new Vector3(PhysicalSize/0.2f, PhysicalSize / 0.2f, PhysicalSize / 0.2f);
 
-                ShowError.text = Base.transform.rotation.eulerAngles.x+" "+ Base.transform.rotation.eulerAngles.y+" "+Base.transform.rotation.eulerAngles.z;
+                ShowError.text = gameObject.transform.Find("底座").gameObject.GetComponent<Rigidbody>().ToString();
 
                 if (QRText.text == "50872")
                 {

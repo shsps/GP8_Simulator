@@ -119,7 +119,7 @@ public class ButtonManager : MonoBehaviour
         ms[0].color = o;
     }
 
-    public void ButtonPressedOnce()
+    public void ButtonToPress()
     {
 
     }

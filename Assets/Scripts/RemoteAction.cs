@@ -28,13 +28,17 @@ public class RemoteAction : MonoBehaviour
             });*/
         txt.text = "X-S- X+S+:沿x軸方向直線移動\nY - L - Y + L +:沿y軸方向直線移動\nZ - U - Z + U +:沿z軸方向直線移動\n協助:夾取物件\n輸入:紀錄當前座標\n測試運轉:依據輸入紀錄順序運行至下個記錄點";
         panel = gameObject.transform.Find("底座").gameObject;
-        //pr = panel.GetComponent<Rigidbody>();
-        Destroy(panel.GetComponent<Rigidbody>());
+        //print(pr);
     }
 
     // Update is called once per frame
     void Update()
     {
+        pr = panel.GetComponent<Rigidbody>();
+        if(pr!=null)
+        {
+            Destroy(panel.GetComponent<Rigidbody>());
+        }
         /*if(ik == null)
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
