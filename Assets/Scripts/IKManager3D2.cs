@@ -301,7 +301,7 @@ public class IKManager3D2 : MonoBehaviour
     }
 
     /// <summary>
-    /// Move tool by WASD
+    /// Move tool along every axis
     /// </summary>
     private void MoveTool()
     {
@@ -336,10 +336,10 @@ public class IKManager3D2 : MonoBehaviour
             MoveToolZ(-Time.deltaTime * 0.5f);
         }
 
-        if(Input.GetKeyDown(KeyCode.V))
+        /*if(Input.GetKeyDown(KeyCode.V))
         {
             init_MoveTool();
-        }
+        }*/
 
         SearchItemCatchable();
     }
