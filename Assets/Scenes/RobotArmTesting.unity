@@ -1523,6 +1523,7 @@ GameObject:
   - component: {fileID: 1933509500}
   - component: {fileID: 1933509499}
   - component: {fileID: 1933509501}
+  - component: {fileID: 1933509502}
   m_Layer: 0
   m_Name: StepManager
   m_TagString: Untagged
@@ -1543,15 +1544,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stepInfos: []
-  step: 0
-  preStep: 0
+  stepInfosNow: []
+  stepOrder: 0
   moveInterval: 1
   catchableItems:
   - {fileID: 900169432}
   - {fileID: 2010291059}
   useKeyboard: 1
   isThisStepRepeat: 0
-  isMovingSlowly: 0
 --- !u!4 &1933509500
 Transform:
   m_ObjectHideFlags: 0
@@ -1578,7 +1578,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d21ac489c126af648a8128e1e6e7ffd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepInfoList: []
+--- !u!114 &1933509502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933509498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fcadfa5bfad3354fac7a3bf9c06c4b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1946520972
 GameObject:
   m_ObjectHideFlags: 0
