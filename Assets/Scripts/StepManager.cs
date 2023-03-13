@@ -5,10 +5,12 @@ using UnityEngine;
 public class StepManager : MonoBehaviour
 {
     public static StepManager instance;
-
+    private List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
     [SerializeField] private List<StepInfo> stepInfos = new List<StepInfo>();
-    [SerializeField] private int step = 0;
-    [SerializeField] private int preStep = 0;
+    [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
+    [SerializeField] private int stepOrder = 0;
+    private int step = 0;
+    private int preStep = 0;
     public enum changeStepDirection
     {
         positive,
@@ -22,7 +24,7 @@ public class StepManager : MonoBehaviour
     [SerializeField] private Catchable[] catchableItems;
     [SerializeField] private bool useKeyboard = false;
     public bool isThisStepRepeat = false;
-    [SerializeField] private bool isMovingSlowly = false;
+    private bool isMovingSlowly = false;
 
     private void Start()
     {
@@ -37,6 +39,13 @@ public class StepManager : MonoBehaviour
         {
             item.SetOrigin();
         }
+
+        foreach (var item in StepInfoGenerator.StepInfoReader())
+        {
+            stepInfosList.Add(item);
+        }
+        print($"Step Infos List count : {stepInfosList.Count}");
+        stepInfosNow = new List<StepInfo>(stepInfosList[0]);
     }
 
     private void Update()
@@ -67,6 +76,28 @@ public class StepManager : MonoBehaviour
         {
             isThisStepRepeat = isThisStepRepeat ? false : true;
         }
+        else if(Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            ChangeStepOrder(-1);
+        }
+        else if(Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            ChangeStepOrder(1);
+        }
+    }
+
+    public void ChangeStepOrder(int changeOrder)
+    {
+        if((stepOrder + changeOrder) < 0 | (stepOrder + changeOrder) >= stepInfosList.Count)
+        {
+            throw new System.IndexOutOfRangeException($"{nameof(changeOrder)} is out of range");
+        }
+        changeOrder = changeOrder > 0 ? 1 : -1;
+        stepOrder += changeOrder;
+
+        ResetRobotArm();
+        stepInfosNow.Clear();
+        stepInfosNow = new List<StepInfo>(stepInfosList[stepOrder]);
     }
 
     public void AddStep(IKManager3D2 ik)
@@ -87,7 +118,7 @@ public class StepManager : MonoBehaviour
 
     private void MoveToOrigin()
     {
-        stepInfos[0].ik.init_MoveTool();
+        stepInfosNow[0].Ik.init_MoveTool();
     }
 
     public void ResetRobotArm()
@@ -98,34 +129,34 @@ public class StepManager : MonoBehaviour
 
     public void MoveDirectly(changeStepDirection stepDirection)
     {
-        if (stepInfos.Count == 0) throw new UnityException("Didn't set any point");
+        if (stepInfosNow.Count == 0) throw new UnityException("Didn't set any point");
         
         if (stepDirection == changeStepDirection.positive && moveIndex == 0)
         {
-            step = step == stepInfos.Count ? 0 : step + 1;
+            step = step == stepInfosNow.Count ? 0 : step + 1;
         }
         else if (stepDirection == changeStepDirection.negative)
         {
-            step = step == 0 ? stepInfos.Count : step - 1;
+            step = step == 0 ? stepInfosNow.Count : step - 1;
         }
 
         ResetRobotArm();
 
         for (int i = 0; i < step; i++)
         {
-            StepInfo preStepInfo = i == 0 ? new StepInfo() : stepInfos[i - 1];
-            StepInfo targetStepInfo = stepInfos[i];
+            StepInfo preStepInfo = i == 0 ? new StepInfo() : stepInfosNow[i - 1];
+            StepInfo targetStepInfo = stepInfosNow[i];
 
             float deltaAngleX = targetStepInfo.MoveToolAngleX - preStepInfo.MoveToolAngleX;
             float deltaAngleY = targetStepInfo.MoveToolAngleY - preStepInfo.MoveToolAngleY;
             float deltaAngleZ = targetStepInfo.MoveToolAngleZ - preStepInfo.MoveToolAngleZ;
 
-            targetStepInfo.ik.MoveToolX(deltaAngleX);
-            targetStepInfo.ik.MoveToolY(deltaAngleY);
-            targetStepInfo.ik.MoveToolZ(deltaAngleZ);
+            targetStepInfo.Ik.MoveToolX(deltaAngleX);
+            targetStepInfo.Ik.MoveToolY(deltaAngleY);
+            targetStepInfo.Ik.MoveToolZ(deltaAngleZ);
             if (targetStepInfo.IsCatchPressed)
             {
-                targetStepInfo.ik.SearchItemCatchable(false);
+                targetStepInfo.Ik.SearchItemCatchable(false);
             }
         }
         preStep = step;
@@ -136,7 +167,7 @@ public class StepManager : MonoBehaviour
 
     public void MoveNextSlowly()
     {
-        if(stepInfos.Count < 0) throw new UnityException("Didn't set any point");
+        if(stepInfosNow.Count < 0) throw new UnityException("Didn't set any point");
 
         if (!hasReset)
         {
@@ -149,7 +180,7 @@ public class StepManager : MonoBehaviour
         {
             step++;
             isMovingSlowly = true;
-            if (step == stepInfos.Count + 1)
+            if (step == stepInfosNow.Count + 1)
             {
                 ResetRobotArm();
                 step = 1;
@@ -171,8 +202,8 @@ public class StepManager : MonoBehaviour
 
     private bool MoveSlowly(int step)
     {
-        StepInfo preStepInfo = preStep == 0 ? new StepInfo() : stepInfos[preStep - 1];
-        StepInfo targetStepInfo = stepInfos[step-1];
+        StepInfo preStepInfo = preStep == 0 ? new StepInfo() : stepInfosNow[preStep - 1];
+        StepInfo targetStepInfo = stepInfosNow[step-1];
         float deltaAngleX = targetStepInfo.MoveToolAngleX - preStepInfo.MoveToolAngleX;
         float deltaAngleY = targetStepInfo.MoveToolAngleY - preStepInfo.MoveToolAngleY;
         float deltaAngleZ = targetStepInfo.MoveToolAngleZ - preStepInfo.MoveToolAngleZ;
@@ -184,9 +215,9 @@ public class StepManager : MonoBehaviour
         //print($"{deltaAngleX}, {deltaAngleY}, {deltaAngleZ}");
         //print($"index : {moveIndex}, ({rotateAngleThisTimeX}, {rotateAngleThisTimeY}, {rotateAngleThisTimeZ})");
 
-        targetStepInfo.ik.MoveToolX(rotateAngleThisTimeX);
-        targetStepInfo.ik.MoveToolY(rotateAngleThisTimeY);
-        targetStepInfo.ik.MoveToolZ(rotateAngleThisTimeZ);
+        targetStepInfo.Ik.MoveToolX(rotateAngleThisTimeX);
+        targetStepInfo.Ik.MoveToolY(rotateAngleThisTimeY);
+        targetStepInfo.Ik.MoveToolZ(rotateAngleThisTimeZ);
         
 
         if(moveIndex == moveInterval)
@@ -194,7 +225,7 @@ public class StepManager : MonoBehaviour
             moveIndex = 0;
             if (targetStepInfo.IsCatchPressed)
             {
-                targetStepInfo.ik.SearchItemCatchable(false);
+                targetStepInfo.Ik.SearchItemCatchable(false);
             }
             preStep = step;
             return true;
