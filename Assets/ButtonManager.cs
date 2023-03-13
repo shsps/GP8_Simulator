@@ -54,6 +54,7 @@ public class ButtonManager : MonoBehaviour
                 if(b.name == "PreviousStep")
                 {
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                 }
                 if(b.name == "NextStep")
                 {

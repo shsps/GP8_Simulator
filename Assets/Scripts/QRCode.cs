@@ -13,6 +13,7 @@ namespace QRTracking
         private GameObject qrCodeCube;
         public GameObject Base/*手臂基座*/,Arm;//自定義手臂
         public GameObject JointRotation;
+        public GameObject StepManagerController;
         //public GameObject qrPosition;//自定義父物件
 
         public TextMesh ShowError;
@@ -64,6 +65,8 @@ namespace QRTracking
 
             ShowError = QRInfo.transform.Find("ShowError").gameObject.GetComponent<TextMesh>();
 
+            StepManagerController = gameObject.transform.Find("StepManager").gameObject;
+
             QRID.text = "Id:" + qrCode.Id.ToString();
             QRNodeID.text = "NodeId:" + qrCode.SpatialGraphNodeId.ToString();
             QRText.text = CodeText;
@@ -109,6 +112,8 @@ namespace QRTracking
                     Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
                     Arm.GetComponent<IKManager3D2>().Init();
                     a = 0;
+
+                    StepManagerController.SetActive(true);
                 }
                 //ShowError.text = Base.activeSelf.ToString();
                 a = 0;
