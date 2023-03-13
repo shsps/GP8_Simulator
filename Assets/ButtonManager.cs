@@ -5,7 +5,8 @@ using Microsoft.MixedReality.Toolkit.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    public PressableButton[] buttonsHoloLens2 = new PressableButton[16];
+    public PressableButton[] buttonsHoloLens2 = new PressableButton[16];//教導盒
+    public PressableButton[] buttonsOfSteps = new PressableButton[2];
     [SerializeField] private Material[] ms;
     [SerializeField] private Color o;
     [SerializeField] private Color c = Color.green;
@@ -15,7 +16,7 @@ public class ButtonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //教導盒
         foreach (PressableButton b in buttonsHoloLens2)
         {
             b.ButtonPressed.AddListener(() =>
@@ -45,11 +46,28 @@ public class ButtonManager : MonoBehaviour
                 ButtonRelease();//Change Color
             });
         }
+
+        foreach (PressableButton b in buttonsOfSteps)
+        {
+            b.ButtonPressed.AddListener(() =>
+            {
+                if(b.name == "PreviousStep")
+                {
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                }
+                if(b.name == "NextStep")
+                {
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
+                }
+            });
+
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        StepManager.instance.MoveNextSlowly();
         if (ik != GameObject.Find("JointS").GetComponent<IKManager3D2>())
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();

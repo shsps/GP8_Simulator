@@ -39,14 +39,7 @@ public class RemoteAction : MonoBehaviour
         {
             Destroy(panel.GetComponent<Rigidbody>());
         }
-        /*if(ik == null)
-        {
-            ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
-        }*/
-        /*if (/*tXNegative//buttonTXN.IsPressing)
-        {
-            ik.MoveToolZ(0.001f);
-        }*/
+        
     }
 
     public void PrintSomething(string s)

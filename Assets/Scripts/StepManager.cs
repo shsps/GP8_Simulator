@@ -132,7 +132,7 @@ public class StepManager : MonoBehaviour
         
         moveIndex = 0;
         isMovingSlowly = false;
-    }
+    }//呼叫來進入下一步
 
     public void MoveNextSlowly()
     {
@@ -167,7 +167,7 @@ public class StepManager : MonoBehaviour
                 MoveDirectly(changeStepDirection.negative);
             }
         }
-    }
+    }//重複播放
 
     private bool MoveSlowly(int step)
     {
