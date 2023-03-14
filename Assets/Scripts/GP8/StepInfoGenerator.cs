@@ -17,6 +17,7 @@ public class StepInfoGenerator : MonoBehaviour
         string readText = File.ReadAllText($"{Application.dataPath}/Resources/StepInfoPrefabs.txt");
         if(readText.Length <= 2)
         {
+            print("StepInfoPrefabs.txt doesn't have any stepInfo");
             return null;
         }
 
