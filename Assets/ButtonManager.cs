@@ -2,20 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Microsoft.MixedReality.Toolkit.UI;
+using System.Text;
 
 public class ButtonManager : MonoBehaviour
 {
     public PressableButton[] buttonsHoloLens2 = new PressableButton[16];//教導盒
     public PressableButton[] buttonsOfSteps = new PressableButton[2];
+    public PressableButton test;
+    public GameObject armForTest,steps;
+    public bool isPlaying = false;
     [SerializeField] private Material[] ms;
     [SerializeField] private Color o;
     [SerializeField] private Color c = Color.green;
     [SerializeField] private IKManager3D2 ik;
     [SerializeField] private IKManager3D2.OperationMode currentMode;
+    //public Microsoft.MixedReality.QR.QRCode qrCode;
 
     // Start is called before the first frame update
     void Start()
     {
+        //armForTest = gameObject.transform.Find("JointS(Scene)").gameObject;
         //教導盒
         foreach (PressableButton b in buttonsHoloLens2)
         {
@@ -47,6 +53,7 @@ public class ButtonManager : MonoBehaviour
             });
         }
 
+        //步驟切換
         foreach (PressableButton b in buttonsOfSteps)
         {
             b.ButtonPressed.AddListener(() =>
@@ -62,13 +69,34 @@ public class ButtonManager : MonoBehaviour
                 }
             });
 
+            /*if(test.IsPressing)
+            {
+                string data = "50872";
+                byte[] byteArray = Encoding.ASCII.GetBytes(data);
+                qrCode = new Microsoft.MixedReality.QR.QRCode().GetRawData(byteArray);
+            }*/
+            test.ButtonPressed.AddListener(() =>
+            {
+                armForTest.SetActive(true);
+                armForTest.transform.GetChild(1).name = "JointS";
+                steps.SetActive(true);
+                steps.name = "StepManager";
+                //QRTracking.QRCode.test = true;
+            });
+
+            test.ButtonReleased.AddListener(() =>
+            {
+
+                //QRTracking.QRCode.test = false;
+            });
         }
+
+        isPlaying = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        StepManager.instance.MoveNextSlowly();
         if (ik != GameObject.Find("JointS").GetComponent<IKManager3D2>())
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
@@ -77,6 +105,7 @@ public class ButtonManager : MonoBehaviour
         {
             if(b.IsPressing)
             {
+                isPlaying = false;
                 switch (b.name)
                 {
                     case "L.X+":
@@ -123,6 +152,19 @@ public class ButtonManager : MonoBehaviour
                         break;
                 }
             }
+        }
+
+        foreach (PressableButton b in buttonsOfSteps)
+        {
+            if (b.IsPressing)
+            {
+                isPlaying = true;
+            }
+        }
+
+        if (isPlaying)
+        {
+            StepManager.instance.MoveNextSlowly();
         }
     }
 

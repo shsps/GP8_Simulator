@@ -5,7 +5,7 @@ using UnityEngine;
 public class StepManager : MonoBehaviour
 {
     public static StepManager instance;
-    private List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
+    public List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
     [SerializeField] private List<StepInfo> stepInfos = new List<StepInfo>();
     [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
     [SerializeField] private int stepOrder = 0;

@@ -14,6 +14,7 @@ namespace QRTracking
         public GameObject Base/*手臂基座*/,Arm;//自定義手臂
         public GameObject JointRotation;
         public GameObject StepManagerController;
+        //public GameObject DefaultThings;//桌子，板子，要夾的物品
         //public GameObject qrPosition;//自定義父物件
 
         public TextMesh ShowError;
@@ -33,6 +34,7 @@ namespace QRTracking
         private long lastTimeStamp = 0;
         Vector3 v = new Vector3(270, 0, 0);
         public static int a = 0;
+        public static bool test = false;
         //public Text debug;
 
         // Use this for initialization
@@ -66,6 +68,8 @@ namespace QRTracking
             ShowError = QRInfo.transform.Find("ShowError").gameObject.GetComponent<TextMesh>();
 
             StepManagerController = gameObject.transform.Find("StepManager").gameObject;
+
+            //DefaultThings = gameObject.transform.Find("DefaultThings").gameObject;
 
             QRID.text = "Id:" + qrCode.Id.ToString();
             QRNodeID.text = "NodeId:" + qrCode.SpatialGraphNodeId.ToString();
@@ -102,9 +106,8 @@ namespace QRTracking
                 lastTimeStamp = qrCode.SystemRelativeLastDetectedTime.Ticks;
                 QRInfo.transform.localScale = new Vector3(PhysicalSize/0.2f, PhysicalSize / 0.2f, PhysicalSize / 0.2f);
 
-                ShowError.text = gameObject.transform.Find("底座").gameObject.GetComponent<Rigidbody>().ToString();
 
-                if (QRText.text == "50872")
+                if (QRText.text == "50872"||test)
                 {
                     Base.SetActive(true);
                     Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置
@@ -114,6 +117,8 @@ namespace QRTracking
                     a = 0;
 
                     StepManagerController.SetActive(true);
+
+                    ShowError.text = StepManager.instance.stepInfosList[0].ToString();
                 }
                 //ShowError.text = Base.activeSelf.ToString();
                 a = 0;
@@ -122,7 +127,10 @@ namespace QRTracking
             Base.transform.rotation = Quaternion.Euler(0, 0, 0);
             //Arm.transform.rotation = Quaternion.Euler(0,0,0);
 
-            if((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
+            /*DefaultThings.transform.localPosition = new Vector3(0, 0, 0);
+            DefaultThings.transform.rotation = Quaternion.Euler(0, 0, 0);*/
+
+            if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
                 a++;
@@ -146,11 +154,6 @@ namespace QRTracking
                 LaunchUri();
             }
             
-            /*if(Arm.transform.rotation!=Quaternion.Euler(v)&&a!=1)//不能鎖y
-            {
-                Arm.transform.rotation = Quaternion.Euler(v);
-                a = 1;
-            }*/
         }
 
         void LaunchUri()
