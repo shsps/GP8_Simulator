@@ -15,8 +15,14 @@ public class StepInfoGenerator : MonoBehaviour
     {
         List<List<StepInfo>> result = new List<List<StepInfo>>();
         string readText = File.ReadAllText($"{Application.dataPath}/Resources/StepInfoPrefabs.txt");
+        if(readText.Length <= 2)
+        {
+            print("StepInfoPrefabs.txt doesn't have any stepInfo");
+            return null;
+        }
+
         MatchCollection matchCollection1 = regex1.Matches(readText);
-       // Debug.Log(readText);
+        //print(readText);
         foreach (Match match1 in matchCollection1)
         {
             List<string> group1 = new List<string>();
@@ -30,6 +36,11 @@ public class StepInfoGenerator : MonoBehaviour
             }
 
             GameObject robotArm = GameObject.Find(group1[0]);
+            if(robotArm == null)
+            {
+                print($"Can not find robot arm named {group1[0]}");
+                continue;
+            }
             robotArm.TryGetComponent<IKManager3D2>(out IKManager3D2 _ik);
             for (int i = 1; i < group1.Count; i++)
             {
@@ -47,6 +58,41 @@ public class StepInfoGenerator : MonoBehaviour
 
     public static void StepInfoWriter()
     {
+        if(StepManager.instance.stepInfos.Count <= 0)
+        {
+            throw new UnityException("Generate failed, didn't save any point");
+        }
+        List<StepInfo> getStepInfos = new List<StepInfo>(StepManager.instance.stepInfos);
 
+        string readText = File.ReadAllText($"{Application.dataPath}/Resources/StepInfoPrefabs.txt");
+
+        string appendText = "{}";
+        if(readText.Length > 2)
+        {
+            appendText = appendText.Insert(0, ",");
+        }
+        appendText = appendText.Insert(appendText.Length - 1, $"{getStepInfos[0].Ik.name},");
+
+        for (int i = 0; i < getStepInfos.Count; i++)
+        {
+            appendText = appendText.Insert(appendText.Length - 1,
+                $"[{getStepInfos[i].MoveToolAngleX}," +
+                $"{getStepInfos[i].MoveToolAngleY}," +
+                $"{getStepInfos[i].MoveToolAngleZ}," +
+                $"{getStepInfos[i].IsCatchPressed}]");
+            if(i < getStepInfos.Count - 1)
+            {
+                appendText = appendText.Insert(appendText.Length - 1, ",");
+            }
+        }
+
+        readText = readText.Insert(readText.Length - 1, appendText);
+
+        File.WriteAllText($"{Application.dataPath}/Resources/StepInfoPrefabs.txt", readText);
+
+
+        StepManager.instance.ReImportStepInfosList();
+
+        print($"Generate sucess");
     }
 }

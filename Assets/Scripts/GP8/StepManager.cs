@@ -5,8 +5,8 @@ using UnityEngine;
 public class StepManager : MonoBehaviour
 {
     public static StepManager instance;
-    public List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
-    [SerializeField] private List<StepInfo> stepInfos = new List<StepInfo>();
+    private List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
+    public List<StepInfo> stepInfos = new List<StepInfo>();
     [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
     [SerializeField] private int stepOrder = 0;
     private int step = 0;
@@ -40,12 +40,7 @@ public class StepManager : MonoBehaviour
             item.SetOrigin();
         }
 
-        foreach (var item in StepInfoGenerator.StepInfoReader())
-        {
-            stepInfosList.Add(item);
-        }
-        print($"Step Infos List count : {stepInfosList.Count}");
-        stepInfosNow = new List<StepInfo>(stepInfosList[0]);
+        ReImportStepInfosList();
     }
 
     private void Update()
@@ -83,6 +78,25 @@ public class StepManager : MonoBehaviour
         else if(Input.GetKeyDown(KeyCode.RightArrow))
         {
             ChangeStepOrder(1);
+        }
+    }
+
+    public void ReImportStepInfosList()
+    {
+        stepInfosList.Clear();
+        List<List<StepInfo>> get = StepInfoGenerator.StepInfoReader();
+        if(get != null)
+        {
+            foreach (var item in StepInfoGenerator.StepInfoReader())
+            {
+                stepInfosList.Add(item);
+            }
+            print($"Step Infos List count : {stepInfosList?.Count}");
+            stepInfosNow = new List<StepInfo>(stepInfosList[stepOrder]);
+        }
+        else
+        {
+            print("StepInfoPrefabs.txt doesn't have any stepInfo");
         }
     }
 
@@ -163,7 +177,7 @@ public class StepManager : MonoBehaviour
         
         moveIndex = 0;
         isMovingSlowly = false;
-    }//呼叫來進入下一步
+    }
 
     public void MoveNextSlowly()
     {
@@ -198,7 +212,7 @@ public class StepManager : MonoBehaviour
                 MoveDirectly(changeStepDirection.negative);
             }
         }
-    }//重複播放
+    }
 
     private bool MoveSlowly(int step)
     {
