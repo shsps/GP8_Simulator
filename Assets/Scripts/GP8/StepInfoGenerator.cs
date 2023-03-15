@@ -9,7 +9,7 @@ public class StepInfoGenerator : MonoBehaviour
     //private List<StepInfo> stepInfoList = new List<StepInfo>();
 
     private static Regex regex1 = new Regex(@"{[^{^}]+}", RegexOptions.Multiline);
-    private static Regex regex2 = new Regex(@"((\d+\.?\d*,)|[A-Za-z]+)+", RegexOptions.Multiline);
+    private static Regex regex2 = new Regex(@"((-?\d+\.?\d*,)|[A-Za-z]+)+", RegexOptions.Multiline);
 
     public static List<List<StepInfo>> StepInfoReader()
     {

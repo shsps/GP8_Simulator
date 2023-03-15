@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Microsoft.MixedReality.Toolkit.UI;
 using System.Text;
+using Microsoft.MixedReality.Toolkit.Input;
 
 public class ButtonManager : MonoBehaviour
 {
     public PressableButton[] buttonsHoloLens2 = new PressableButton[16];//教導盒
-    public PressableButton[] buttonsOfSteps = new PressableButton[2];
+    //public GameObject[] buttons;
+    public GameObject teachingBoxButtonGroup;
+    public List<GameObject> buttons = new List<GameObject>();
+    public string[] buttonsThatDontNeedToUse = { "8+","8-","E+","E-","L.移位","R.X+", "R.X-", "R.Y+", "R.Y-", "R.Z+", "R.Z-","主選單","停止鈕","後背版1", "後背版2","急停鈕","換頁","方向鍵","機器人切換","機體" ,"版面","用途","直接切換","移位","簡易選單","變更","輔助","連鎖","運動模式","選擇","鑰匙","鑰匙孔","開始鈕"};
+    //public PressableButton[] buttons = new PressableButton[68];
+    public PressableButton[] buttonsOfSteps = new PressableButton[3];
+    public int actionType = 0;
     public PressableButton test;
     public GameObject armForTest,steps;
     public bool isPlaying = false;
@@ -21,6 +28,39 @@ public class ButtonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        for(int i = 0; i<teachingBoxButtonGroup.transform.childCount;i++)
+        {
+            /*foreach(string dnu in buttonsThatDontNeedToUse)
+            {
+                if (teachingBoxButtonGroup.transform.GetChild(i).gameObject.name != dnu)
+                {*/
+            string tmp = teachingBoxButtonGroup.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().materials[0].name.Substring(0, 2);
+            if (tmp=="白色"||tmp=="藍色")
+            {
+                    buttons.Add(teachingBoxButtonGroup.transform.GetChild(i).gameObject);
+            }
+                /*}
+            }*/
+        }
+        foreach(GameObject btg in buttons)
+        {
+            /*btg.AddComponent<BoxCollider>();
+            PressableButton btgap = btg.AddComponent<PressableButton>();
+            btg.AddComponent<NearInteractionTouchable>();*/
+            /*btgap.ButtonPressed.AddListener(() =>
+            {*/
+                //ButtonPressed(btg.GetComponent<MeshRenderer>());//Change Color
+            //});
+        }
+        /*foreach(GameObject g in buttons)
+        {
+            print(g.name);
+            PressableButton btg = g.GetComponent<PressableButton>();
+            btg.ButtonPressed.AddListener(() =>
+            {
+                ButtonPressed(g.GetComponent<MeshRenderer>());
+            });
+        }*/
         //armForTest = gameObject.transform.Find("JointS(Scene)").gameObject;
         //教導盒
         foreach (PressableButton b in buttonsHoloLens2)
@@ -49,7 +89,7 @@ public class ButtonManager : MonoBehaviour
             });
             b.ButtonReleased.AddListener(() =>
             {
-                ButtonRelease();//Change Color
+                ButtonRelease(b.GetComponent<MeshRenderer>());//Change Color
             });
         }
 
@@ -58,7 +98,25 @@ public class ButtonManager : MonoBehaviour
         {
             b.ButtonPressed.AddListener(() =>
             {
-                if(b.name == "PreviousStep")
+                if(b.name == "ChangeActionType")
+                {
+                    foreach(GameObject btr in buttons)
+                    {
+                        ButtonRelease(btr.GetComponent<MeshRenderer>());
+                    }
+                    try
+                    {
+                        StepManager.instance.ChangeStepOrder(++actionType);
+                        StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
+                    }
+                    catch(System.IndexOutOfRangeException e)
+                    {
+                        actionType = 0;
+                        StepManager.instance.ChangeStepOrder(actionType);
+                        StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
+                    }
+                }
+                if(b.name == "PreviousStep")//TODO:Back To Previous Press Button
                 {
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
@@ -66,6 +124,8 @@ public class ButtonManager : MonoBehaviour
                 if(b.name == "NextStep")
                 {
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
+                    //ButtonPressed(buttons[0].GetComponent<MeshRenderer>());
+                    ButtonToPress();
                 }
             });
 
@@ -175,13 +235,94 @@ public class ButtonManager : MonoBehaviour
         ms[0].color = c;
     }
 
-    public void ButtonRelease(/*MeshRenderer mesh*/)
+    public void ButtonRelease(MeshRenderer lastMesh)
     {
+        ms = lastMesh.materials;
         ms[0].color = o;
     }
 
     public void ButtonToPress()
     {
+        switch (actionType)
+        {
+            case 0:
+                TutorialButtonToPress();
+                break;
+            case 1:
+                GrabButtonToPress();
+                break;
+        }
+
+
+    }
+
+    public void TutorialButtonToPress()
+    {
+        switch (GameObject.Find("StepManager").GetComponent<StepManager>().step)
+        {
+            case 0:
+                ButtonPressed(buttons[16].GetComponent<MeshRenderer>());
+                break;
+            case 1:
+                ButtonRelease(buttons[16].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[17].GetComponent<MeshRenderer>());
+                break;
+            case 2:
+                ButtonRelease(buttons[17].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[18].GetComponent<MeshRenderer>());
+                break;
+            case 3:
+                ButtonRelease(buttons[18].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[19].GetComponent<MeshRenderer>());
+                break;
+            case 4:
+                ButtonRelease(buttons[19].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[20].GetComponent<MeshRenderer>());
+                break;
+            case 5:
+                ButtonRelease(buttons[20].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[21].GetComponent<MeshRenderer>());
+                break;
+
+
+
+        }
+
+    }
+
+    public void GrabButtonToPress()//TODO:Insert Real Step
+    {
+        switch (GameObject.Find("StepManager").GetComponent<StepManager>().step)
+        {
+            case 0:
+                ButtonPressed(buttons[20].GetComponent<MeshRenderer>());//Z+ U+
+                break;
+            case 1:
+                ButtonRelease(buttons[20].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[21].GetComponent<MeshRenderer>());
+                break;
+            case 2:
+                ButtonRelease(buttons[21].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[22].GetComponent<MeshRenderer>());
+                break;
+            case 3:
+                ButtonRelease(buttons[22].GetComponent<MeshRenderer>());
+                ButtonPressed(buttons[23].GetComponent<MeshRenderer>());
+                break;
+            case 4:
+
+                break;
+            case 5:
+
+                break;
+            case 6:
+
+                break;
+            case 7:
+
+                break;
+
+        }
 
     }
 }

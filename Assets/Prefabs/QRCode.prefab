@@ -1749,7 +1749,8 @@ MonoBehaviour:
   stepOrder: 0
   moveInterval: 4
   catchableItems:
-  - {fileID: 0}
+  - {fileID: 6881552218812911700}
+  - {fileID: 2774700649951247272}
   useKeyboard: 0
   isThisStepRepeat: 1
 --- !u!114 &5202358965749829955
@@ -2573,7 +2574,7 @@ PrefabInstance:
     - target: {fileID: 7137188970261587536, guid: aa2339beb8f13e249b45929d0c7c31b8,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8568150987226995974, guid: aa2339beb8f13e249b45929d0c7c31b8,
         type: 3}
@@ -2714,12 +2715,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b9a7eac6b31754345bbf713408090aa1,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00027
+      value: -0.000270001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b9a7eac6b31754345bbf713408090aa1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.005018
+      value: 0.004675748
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b9a7eac6b31754345bbf713408090aa1,
         type: 3}
@@ -3234,12 +3235,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 5b3fc4e8df5e94741a47199229da3f9e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.000848
+      value: -0.0008480051
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b3fc4e8df5e94741a47199229da3f9e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.005005002
+      value: 0.004675748
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b3fc4e8df5e94741a47199229da3f9e,
         type: 3}
