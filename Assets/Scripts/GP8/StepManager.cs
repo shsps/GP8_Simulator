@@ -9,8 +9,10 @@ public class StepManager : MonoBehaviour
     public List<StepInfo> stepInfos = new List<StepInfo>();
     [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
     [SerializeField] private int stepOrder = 0;
-    private int step = 0;
+    public int step = 0;
     private int preStep = 0;
+    [SerializeField]private int catchStep = -1;
+    [SerializeField] private bool isMoveSlowlyAt0 = true;
     public enum changeStepDirection
     {
         positive,
@@ -112,6 +114,7 @@ public class StepManager : MonoBehaviour
         ResetRobotArm();
         stepInfosNow.Clear();
         stepInfosNow = new List<StepInfo>(stepInfosList[stepOrder]);
+        step = 0;
     }
 
     public void AddStep(IKManager3D2 ik)
@@ -126,6 +129,10 @@ public class StepManager : MonoBehaviour
     {
         foreach (var item in catchableItems)
         {
+            /*if(item.IsCatching)
+            {
+                item.Release();
+            }*/
             item.Init();
         }
     }
@@ -154,8 +161,16 @@ public class StepManager : MonoBehaviour
             step = step == 0 ? stepInfosNow.Count : step - 1;
         }
 
-        ResetRobotArm();
-
+        if(step == 0)
+        {
+            catchStep = -1;
+            ResetRobotArm();
+        }
+        else
+        {
+            MoveToOrigin();
+        }
+        //print($"step : {step}");
         for (int i = 0; i < step; i++)
         {
             StepInfo preStepInfo = i == 0 ? new StepInfo() : stepInfosNow[i - 1];
@@ -168,7 +183,11 @@ public class StepManager : MonoBehaviour
             targetStepInfo.Ik.MoveToolX(deltaAngleX);
             targetStepInfo.Ik.MoveToolY(deltaAngleY);
             targetStepInfo.Ik.MoveToolZ(deltaAngleZ);
-            if (targetStepInfo.IsCatchPressed)
+            if (targetStepInfo.CatchStatusNow == IKManager3D2.CatchStatus.Catch && stepInfosNow[i].Ik.catchStatusNow != IKManager3D2.CatchStatus.Catch)
+            {
+                targetStepInfo.Ik.SearchItemCatchable(false);
+            }
+            else if(targetStepInfo.CatchStatusNow == IKManager3D2.CatchStatus.Release && stepInfosNow[i].Ik.catchStatusNow != IKManager3D2.CatchStatus.Release)
             {
                 targetStepInfo.Ik.SearchItemCatchable(false);
             }
@@ -194,11 +213,13 @@ public class StepManager : MonoBehaviour
         {
             step++;
             isMovingSlowly = true;
+            isMoveSlowlyAt0 = false;
             if (step == stepInfosNow.Count + 1)
             {
                 ResetRobotArm();
                 step = 1;
                 preStep = 0;
+                isMoveSlowlyAt0 = true;
                 return;
             }
         }
@@ -237,11 +258,15 @@ public class StepManager : MonoBehaviour
         if(moveIndex == moveInterval)
         {
             moveIndex = 0;
-            if (targetStepInfo.IsCatchPressed)
+            if (targetStepInfo.CatchStatusNow == IKManager3D2.CatchStatus.Catch && stepInfosNow[step - 1].Ik.catchStatusNow != IKManager3D2.CatchStatus.Catch)
             {
                 targetStepInfo.Ik.SearchItemCatchable(false);
             }
-            preStep = step;
+            else if (targetStepInfo.CatchStatusNow == IKManager3D2.CatchStatus.Release && stepInfosNow[step - 1].Ik.catchStatusNow != IKManager3D2.CatchStatus.Release)
+            {
+                targetStepInfo.Ik.SearchItemCatchable(false);
+            }
+            //preStep = step;
             return true;
         }
         moveIndex++;
