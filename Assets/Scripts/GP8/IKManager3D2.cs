@@ -63,6 +63,15 @@ public class IKManager3D2 : MonoBehaviour
     public float MoveToolAngleZ = 0;
     [HideInInspector]
     public bool IsCatchPressed = false;
+    public enum CatchStatus
+    {
+        None,
+        Catch,
+        Catching,
+        Release
+    }
+    public CatchStatus catchStatusNow;
+    public bool IsCatching = false;
     private Quaternion[] originRotation;
     private Vector3[] originPosition;
 
@@ -85,6 +94,14 @@ public class IKManager3D2 : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.R) && useKeyboard)//Record point
         {
             StepManager.instance.AddStep(this);
+            if(catchStatusNow == CatchStatus.Catch)
+            {
+                catchStatusNow = CatchStatus.Catching;
+            }
+            else if(catchStatusNow == CatchStatus.Release)
+            {
+                catchStatusNow = CatchStatus.None;
+            }
             IsCatchPressed = false;
         }
     }
@@ -593,8 +610,18 @@ public class IKManager3D2 : MonoBehaviour
             {
                 if(hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
-                    if (!c.IsCatching) c.Catch(joints[joints.Length - 2].gameObject);
-                    else c.Release();
+                    if (!c.IsCatching)
+                    {
+                        c.Catch(joints[joints.Length - 2].gameObject);
+                        catchStatusNow = CatchStatus.Catch;
+                        IsCatching = true;
+                    }
+                    else
+                    {
+                        c.Release();
+                        catchStatusNow = CatchStatus.Release;
+                        IsCatching = false;
+                    }
                 }
                 IsCatchPressed = true;
             }
@@ -603,10 +630,21 @@ public class IKManager3D2 : MonoBehaviour
         {
             if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
+                    print("IsCatching : " + hit.collider.name);
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
-                    if (!c.IsCatching) c.Catch(joints[joints.Length - 2].gameObject);
-                    else c.Release();
+                    if (!c.IsCatching)
+                    {
+                        c.Catch(joints[joints.Length - 2].gameObject);
+                        catchStatusNow = CatchStatus.Catch;
+                        IsCatching = true;
+                    }
+                    else
+                    {
+                        c.Release();
+                        catchStatusNow = CatchStatus.Release;
+                        IsCatching = false;
+                    }
                 }
                 IsCatchPressed = true;
             }

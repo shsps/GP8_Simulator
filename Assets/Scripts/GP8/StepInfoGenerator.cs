@@ -9,7 +9,7 @@ public class StepInfoGenerator : MonoBehaviour
     //private List<StepInfo> stepInfoList = new List<StepInfo>();
 
     private static Regex regex1 = new Regex(@"{[^{^}]+}", RegexOptions.Multiline);
-    private static Regex regex2 = new Regex(@"((-?\d+\.?\d*,)|[A-Za-z]+)+", RegexOptions.Multiline);
+    private static Regex regex2 = new Regex(@"((-?\d+\.?\d*,)|[A-Za-z]+,?)+", RegexOptions.Multiline);
 
     public static List<List<StepInfo>> StepInfoReader()
     {
@@ -35,7 +35,7 @@ public class StepInfoGenerator : MonoBehaviour
                 group1.Add(match2.Value);
             }
 
-            GameObject robotArm = GameObject.Find(group1[0]);
+            GameObject robotArm = GameObject.Find(group1[0].Replace(",", ""));
             if(robotArm == null)
             {
                 print($"Can not find robot arm named {group1[0]}");
@@ -49,7 +49,8 @@ public class StepInfoGenerator : MonoBehaviour
                     float.Parse(sp[0]),
                     float.Parse(sp[1]),
                     float.Parse(sp[2]),
-                    bool.Parse(sp[3])));
+                    bool.Parse(sp[3]),
+                    CatchStatusParse(sp[4])));
             }
             result.Add(tmpStepInfo);
         }
@@ -79,7 +80,8 @@ public class StepInfoGenerator : MonoBehaviour
                 $"[{getStepInfos[i].MoveToolAngleX}," +
                 $"{getStepInfos[i].MoveToolAngleY}," +
                 $"{getStepInfos[i].MoveToolAngleZ}," +
-                $"{getStepInfos[i].IsCatchPressed}]");
+                $"{getStepInfos[i].IsCatchPressed}," +
+                $"{getStepInfos[i].CatchStatusNow}]");
             if(i < getStepInfos.Count - 1)
             {
                 appendText = appendText.Insert(appendText.Length - 1, ",");
@@ -94,5 +96,21 @@ public class StepInfoGenerator : MonoBehaviour
         StepManager.instance.ReImportStepInfosList();
 
         print($"Generate sucess");
+    }
+
+    private static IKManager3D2.CatchStatus CatchStatusParse(string s)
+    {
+        switch(s)
+        {
+            case "None":
+                return IKManager3D2.CatchStatus.None;
+            case "Catch":
+                return IKManager3D2.CatchStatus.Catch;
+            case "Catching":
+                return IKManager3D2.CatchStatus.Catching;
+            case "Release":
+                return IKManager3D2.CatchStatus.Release;
+        }
+        return IKManager3D2.CatchStatus.None;
     }
 }
