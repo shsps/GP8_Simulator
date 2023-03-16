@@ -20,6 +20,7 @@ public class ButtonManager : MonoBehaviour
     public PressableButton[] buttonsOfSteps = new PressableButton[3];
     public int actionType = 0;
     public PressableButton test;
+    public GameObject teachingText;
     public GameObject armForTest,steps;
     public bool isPlaying = false;
     [SerializeField] private Material[] ms;
@@ -35,12 +36,12 @@ public class ButtonManager : MonoBehaviour
         for(int i = 0; i<teachingBoxButtonGroup.transform.childCount;i++)//All buttons in teaching box
         {
             GameObject btn = teachingBoxButtonGroup.transform.GetChild(i).gameObject;
-            if (btn.tag=="Tutorial")
+            if (btn.tag=="Tutorial"||btn.tag =="Both")
             {
                 tutorialBtn.Add(btn);
                 tutorialBtnMaterials.Add(btn.GetComponent<MeshRenderer>().materials[0].color);
             }
-            if(btn.tag == "Grab")
+            if(btn.tag == "Grab"||btn.tag=="Both")
             {
                 grabBtn.Add(btn);
                 grabBtnMaterials.Add(btn.GetComponent<MeshRenderer>().materials[0].color);
@@ -119,6 +120,8 @@ public class ButtonManager : MonoBehaviour
                         StepManager.instance.ChangeStepOrder(++actionType);
                         StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
                         ButtonToPress();
+                        teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Next);
+                        teachingText.GetComponent<TutorialBoard>().ChangeTitle();
                     }
                     catch(System.IndexOutOfRangeException e)
                     {
@@ -126,16 +129,20 @@ public class ButtonManager : MonoBehaviour
                         StepManager.instance.ChangeStepOrder(actionType);
                         StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
                         ButtonToPress();
+                        teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                        teachingText.GetComponent<TutorialBoard>().ChangeTitle();
                     }
                 }
                 if(b.name == "PreviousStep")//TODO:Back To Previous Press Button
                 {
+                    teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Previous);
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     ButtonToPress();
                 }
                 if(b.name == "NextStep")
                 {
+                    teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Next);
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
                     //ButtonPressed(buttons[0].GetComponent<MeshRenderer>());
                     ButtonToPress();
