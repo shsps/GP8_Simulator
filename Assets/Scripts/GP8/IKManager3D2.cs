@@ -630,7 +630,6 @@ public class IKManager3D2 : MonoBehaviour
         {
             if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
-                    print("IsCatching : " + hit.collider.name);
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
                     if (!c.IsCatching)
