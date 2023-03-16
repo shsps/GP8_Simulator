@@ -28,7 +28,7 @@ public class TutorialBoard : MonoBehaviour
     {
         if (direction == ChangeOrderDirection.Next)
         {
-            if(TextOrder == textArray.Length - 1)
+            if(TextOrder == textArray[TextArrayOrder].Length - 1)
             {
                 throw new System.IndexOutOfRangeException("TextOrder is at the last.");
             }
@@ -50,7 +50,7 @@ public class TutorialBoard : MonoBehaviour
     {
         if (direction == ChangeOrderDirection.Next)
         {
-            if (TextArrayOrder == textArray[TextArrayOrder].Length - 1)
+            if (TextArrayOrder == textArray.Length - 1)
             {
                 throw new System.IndexOutOfRangeException("TextArrayOrder is at the last.");
             }

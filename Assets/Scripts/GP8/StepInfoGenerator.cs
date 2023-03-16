@@ -11,15 +11,18 @@ public class StepInfoGenerator : MonoBehaviour
     private static Regex regex1 = new Regex(@"{[^{^}]+}", RegexOptions.Multiline);
     private static Regex regex2 = new Regex(@"((-?\d+\.?\d*,)|[A-Za-z]+,?)+", RegexOptions.Multiline);
 
+    private static string stepsString = "";
+
     public static List<List<StepInfo>> StepInfoReader()
     {
         List<List<StepInfo>> result = new List<List<StepInfo>>();
-        string readText = File.ReadAllText($"{Application.dataPath}/Resources/StepInfoPrefabs.txt");
+        /*string readText = File.ReadAllText($"{Application.dataPath}/Resources/StepInfoPrefabs.txt");
         if(readText.Length <= 2)
         {
             print("StepInfoPrefabs.txt doesn't have any stepInfo");
             return null;
-        }
+        }*/
+        string readText = stepsString;
 
         MatchCollection matchCollection1 = regex1.Matches(readText);
         //print(readText);
