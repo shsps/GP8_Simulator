@@ -11,8 +11,12 @@ public class ButtonManager : MonoBehaviour
     //public GameObject[] buttons;
     public GameObject teachingBoxButtonGroup;
     public List<GameObject> buttons = new List<GameObject>();
-    public string[] buttonsThatDontNeedToUse = { "8+","8-","E+","E-","L.移位","R.X+", "R.X-", "R.Y+", "R.Y-", "R.Z+", "R.Z-","主選單","停止鈕","後背版1", "後背版2","急停鈕","換頁","方向鍵","機器人切換","機體" ,"版面","用途","直接切換","移位","簡易選單","變更","輔助","連鎖","運動模式","選擇","鑰匙","鑰匙孔","開始鈕"};
+    //public string[] buttonsThatDontNeedToUse = { "8+","8-","E+","E-","L.移位","R.X+", "R.X-", "R.Y+", "R.Y-", "R.Z+", "R.Z-","主選單","停止鈕","後背版1", "後背版2","急停鈕","換頁","方向鍵","機器人切換","機體" ,"版面","用途","直接切換","移位","簡易選單","變更","輔助","連鎖","運動模式","選擇","鑰匙","鑰匙孔","開始鈕"};
     //public PressableButton[] buttons = new PressableButton[68];
+    public List<GameObject> tutorialBtn = new List<GameObject>();
+    public List<Color> tutorialBtnMaterials = new List<Color>();
+    public List<GameObject> grabBtn = new List<GameObject>();
+    public List<Color> grabBtnMaterials = new List<Color>();
     public PressableButton[] buttonsOfSteps = new PressableButton[3];
     public int actionType = 0;
     public PressableButton test;
@@ -28,18 +32,23 @@ public class ButtonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i<teachingBoxButtonGroup.transform.childCount;i++)
+        for(int i = 0; i<teachingBoxButtonGroup.transform.childCount;i++)//All buttons in teaching box
         {
-            /*foreach(string dnu in buttonsThatDontNeedToUse)
+            GameObject btn = teachingBoxButtonGroup.transform.GetChild(i).gameObject;
+            if (btn.tag=="Tutorial")
             {
-                if (teachingBoxButtonGroup.transform.GetChild(i).gameObject.name != dnu)
-                {*/
-            string tmp = teachingBoxButtonGroup.transform.GetChild(i).gameObject.GetComponent<MeshRenderer>().materials[0].name.Substring(0, 2);
+                tutorialBtn.Add(btn);
+                tutorialBtnMaterials.Add(btn.GetComponent<MeshRenderer>().materials[0].color);
+            }
+            if(btn.tag == "Grab")
+            {
+                grabBtn.Add(btn);
+                grabBtnMaterials.Add(btn.GetComponent<MeshRenderer>().materials[0].color);
+            }
+            /*string tmp = btn.GetComponent<MeshRenderer>().materials[0].name.Substring(0, 2);
             if (tmp=="白色"||tmp=="藍色")
             {
-                    buttons.Add(teachingBoxButtonGroup.transform.GetChild(i).gameObject);
-            }
-                /*}
+                    buttons.Add(btn);
             }*/
         }
         foreach(GameObject btg in buttons)
@@ -100,26 +109,30 @@ public class ButtonManager : MonoBehaviour
             {
                 if(b.name == "ChangeActionType")
                 {
-                    foreach(GameObject btr in buttons)
+                    /*foreach(GameObject btr in buttons)
                     {
                         ButtonRelease(btr.GetComponent<MeshRenderer>());
-                    }
+                    }*/
+                    ResetBtns();
                     try
                     {
                         StepManager.instance.ChangeStepOrder(++actionType);
                         StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
+                        ButtonToPress();
                     }
                     catch(System.IndexOutOfRangeException e)
                     {
                         actionType = 0;
                         StepManager.instance.ChangeStepOrder(actionType);
                         StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
+                        ButtonToPress();
                     }
                 }
                 if(b.name == "PreviousStep")//TODO:Back To Previous Press Button
                 {
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                    ButtonToPress();
                 }
                 if(b.name == "NextStep")
                 {
@@ -241,7 +254,7 @@ public class ButtonManager : MonoBehaviour
         ms[0].color = o;
     }
 
-    public void ButtonToPress()
+    public void ButtonToPress()//Check witch action to show
     {
         switch (actionType)
         {
@@ -256,38 +269,41 @@ public class ButtonManager : MonoBehaviour
 
     }
 
-    public void TutorialButtonToPress()
+    public void TutorialButtonToPress()//Tutorial
     {
-        switch (GameObject.Find("StepManager").GetComponent<StepManager>().step)
+        int nowStep = GameObject.Find("StepManager").GetComponent<StepManager>().step;
+        //print(nowStep);//OK
+        switch (nowStep)
         {
             case 0:
-                ButtonPressed(buttons[16].GetComponent<MeshRenderer>());
+                ResetBtns();
+                ButtonPressed(tutorialBtn[nowStep].GetComponent<MeshRenderer>());
                 break;
             case 1:
-                ButtonRelease(buttons[16].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[17].GetComponent<MeshRenderer>());
+                ResetBtns();
+                ButtonPressed(tutorialBtn[nowStep].GetComponent<MeshRenderer>());
                 break;
             case 2:
-                ButtonRelease(buttons[17].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[18].GetComponent<MeshRenderer>());
+                ResetBtns();
+                ButtonPressed(tutorialBtn[nowStep].GetComponent<MeshRenderer>());
                 break;
             case 3:
-                ButtonRelease(buttons[18].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[19].GetComponent<MeshRenderer>());
+                ResetBtns();
+                ButtonPressed(tutorialBtn[nowStep].GetComponent<MeshRenderer>());
                 break;
             case 4:
-                ButtonRelease(buttons[19].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[20].GetComponent<MeshRenderer>());
+                ResetBtns();
+                ButtonPressed(tutorialBtn[nowStep].GetComponent<MeshRenderer>());
                 break;
             case 5:
-                ButtonRelease(buttons[20].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[21].GetComponent<MeshRenderer>());
+                ResetBtns();
+                ButtonPressed(tutorialBtn[nowStep].GetComponent<MeshRenderer>());
                 break;
-
-
-
+            case 6:
+                ResetBtns();
+                ButtonPressed(tutorialBtn[0].GetComponent<MeshRenderer>());
+                break;
         }
-
     }
 
     public void GrabButtonToPress()//TODO:Insert Real Step
@@ -295,19 +311,16 @@ public class ButtonManager : MonoBehaviour
         switch (GameObject.Find("StepManager").GetComponent<StepManager>().step)
         {
             case 0:
-                ButtonPressed(buttons[20].GetComponent<MeshRenderer>());//Z+ U+
+
                 break;
             case 1:
-                ButtonRelease(buttons[20].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[21].GetComponent<MeshRenderer>());
+
                 break;
             case 2:
-                ButtonRelease(buttons[21].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[22].GetComponent<MeshRenderer>());
+
                 break;
             case 3:
-                ButtonRelease(buttons[22].GetComponent<MeshRenderer>());
-                ButtonPressed(buttons[23].GetComponent<MeshRenderer>());
+
                 break;
             case 4:
 
@@ -324,5 +337,17 @@ public class ButtonManager : MonoBehaviour
 
         }
 
+    }
+
+    public void ResetBtns()
+    {
+        for (int i = 0;i<tutorialBtnMaterials.Count;i++)
+        {
+            tutorialBtn[i].GetComponent<MeshRenderer>().materials[0].color = tutorialBtnMaterials[i];
+        }
+        for (int j = 0; j < grabBtnMaterials.Count; j++)
+        {
+            grabBtn[j].GetComponent<MeshRenderer>().materials[0].color = grabBtnMaterials[j];
+        }
     }
 }

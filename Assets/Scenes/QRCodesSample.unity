@@ -3762,7 +3762,7 @@ GameObject:
   - component: {fileID: 223974287}
   m_Layer: 0
   m_Name: "\u6A5F\u9AD4"
-  m_TagString: Untagged
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4320,7 +4320,7 @@ GameObject:
   - component: {fileID: 223974208}
   m_Layer: 0
   m_Name: L.Y+
-  m_TagString: Untagged
+  m_TagString: Tutorial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4395,7 +4395,7 @@ GameObject:
   - component: {fileID: 223974211}
   m_Layer: 0
   m_Name: L.Z-
-  m_TagString: Untagged
+  m_TagString: Tutorial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4672,7 +4672,7 @@ GameObject:
   - component: {fileID: 223974282}
   m_Layer: 0
   m_Name: L.X-
-  m_TagString: Untagged
+  m_TagString: Tutorial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5059,7 +5059,7 @@ GameObject:
   - component: {fileID: 223974394}
   m_Layer: 0
   m_Name: L.Z+
-  m_TagString: Untagged
+  m_TagString: Tutorial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5080,7 +5080,7 @@ GameObject:
   - component: {fileID: 223974294}
   m_Layer: 0
   m_Name: L.Y-
-  m_TagString: Untagged
+  m_TagString: Tutorial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5101,7 +5101,7 @@ GameObject:
   - component: {fileID: 223974272}
   m_Layer: 0
   m_Name: L.X+
-  m_TagString: Untagged
+  m_TagString: Tutorial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11709,6 +11709,8 @@ MonoBehaviour:
   stepInfosNow: []
   stepOrder: 0
   step: 0
+  catchStep: -1
+  isMoveSlowlyAt0: 1
   moveInterval: 4
   catchableItems:
   - {fileID: 1331052984}
@@ -11895,6 +11897,10 @@ MonoBehaviour:
   - {fileID: 223974400}
   teachingBoxButtonGroup: {fileID: 2091048034}
   buttons: []
+  tutorialBtn: []
+  tutorialBtnMaterials: []
+  grabBtn: []
+  grabBtnMaterials: []
   buttonsOfSteps:
   - {fileID: 605323812}
   - {fileID: 1385584512}
@@ -16767,6 +16773,8 @@ MonoBehaviour:
   stepInfosNow: []
   stepOrder: 0
   step: 0
+  catchStep: -1
+  isMoveSlowlyAt0: 1
   moveInterval: 4
   catchableItems:
   - {fileID: 411401256}
