@@ -10,7 +10,7 @@ public class TutorialBoard : MonoBehaviour
     private string[][] textArray =
     {
         new string[] {"按下X+可向右移動", "按下X-可向左移動", "按下Y+可向上移動", "按下Y-可向下移動", "按下Z+可向前移動", "按下Z-可向後移動"},
-        new string[] {"第一步移動到方塊正上方", "第二步向下移動到可夾取範圍", "第三部按下夾取按鈕"}
+        new string[] {"第一步:移動到方塊正上方，並按下輸入", "第二步:向下移動到可夾取範圍，", "第三步:按下夾取按鈕", "第四步", "第五步", "第六步", "第七步", "第八步" }
     };
     public int TextArrayOrder = 0;
     public int TextOrder = 0;

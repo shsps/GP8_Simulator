@@ -11,7 +11,7 @@ public class StepInfoGenerator : MonoBehaviour
     private static Regex regex1 = new Regex(@"{[^{^}]+}", RegexOptions.Multiline);
     private static Regex regex2 = new Regex(@"((-?\d+\.?\d*,)|[A-Za-z]+,?)+", RegexOptions.Multiline);
 
-    private static string stepsString = "";
+    private static string stepsString = "{{JointS,[0.218999,0,0,False,None],[0,0,0,False,None],[0,-0.9019955,0,False,None],[0,0,0,False,None],[0,0,0.4920006,False,None],[0,0,0,False,None]},{JointS,[-0.03851,0,0.4840006,False,None],[-0.03851,2.319996,0.484006,False,None],[-0.03851,2.319996,0.4840006,True,Catch],[-0.03851,1.115993,0.4840006,False,Catching],[-0.03851,0.6839985,0.09399995,False,Catching],[-0.03851,2.404,0.09399995,False,Catching],[-0.03851,2.404,0.09399995,True,Release],[-0.03851,0.9139955,0.09399995,False,None]}}";
 
     public static List<List<StepInfo>> StepInfoReader()
     {

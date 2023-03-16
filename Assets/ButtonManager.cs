@@ -33,6 +33,7 @@ public class ButtonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         for(int i = 0; i<teachingBoxButtonGroup.transform.childCount;i++)//All buttons in teaching box
         {
             GameObject btn = teachingBoxButtonGroup.transform.GetChild(i).gameObject;
@@ -181,6 +182,7 @@ public class ButtonManager : MonoBehaviour
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
         }
+        StepManager.instance.MoveNextSlowly();
         foreach (PressableButton b in buttonsHoloLens2)//Continue
         {
             if(b.IsPressing)

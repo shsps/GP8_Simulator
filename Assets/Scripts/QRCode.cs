@@ -119,6 +119,8 @@ namespace QRTracking
                     StepManagerController.SetActive(true);
 
                     ShowError.text = StepManagerController.activeSelf.ToString();
+
+                    StepManager.instance.MoveNextSlowly();//Maybe this will have bug
                 }
                 //ShowError.text = Base.activeSelf.ToString();
                 a = 0;
