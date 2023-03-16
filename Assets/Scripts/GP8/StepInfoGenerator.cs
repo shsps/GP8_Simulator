@@ -22,7 +22,9 @@ public class StepInfoGenerator : MonoBehaviour
             print("StepInfoPrefabs.txt doesn't have any stepInfo");
             return null;
         }*/
-        string readText = stepsString;
+        
+        //string readText = stepsString;
+        string readText = Resources.Load<TextAsset>("StepInfoPrefabs").text;
 
         MatchCollection matchCollection1 = regex1.Matches(readText);
         //print(readText);
