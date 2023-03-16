@@ -35,10 +35,7 @@ public class StepManager : MonoBehaviour
         }
         moveInterval = ((int)(moveInterval / Time.fixedDeltaTime));
 
-        foreach (var item in catchableItems)
-        {
-            item.SetOrigin();
-        }
+        ResetCatchableItemOrigin();
 
         ReImportStepInfosList();
     }
@@ -78,6 +75,14 @@ public class StepManager : MonoBehaviour
         else if(Input.GetKeyDown(KeyCode.RightArrow))
         {
             ChangeStepOrder(1);
+        }
+    }
+
+    public void ResetCatchableItemOrigin()
+    {
+        foreach (var item in catchableItems)
+        {
+            item.SetOrigin();
         }
     }
 
