@@ -11,8 +11,6 @@ public class StepManager : MonoBehaviour
     [SerializeField] private int stepOrder = 0;
     public int step = 0;
     private int preStep = 0;
-    [SerializeField]private int catchStep = -1;
-    [SerializeField] private bool isMoveSlowlyAt0 = true;
     public enum changeStepDirection
     {
         positive,
@@ -163,7 +161,6 @@ public class StepManager : MonoBehaviour
 
         if(step == 0)
         {
-            catchStep = -1;
             ResetRobotArm();
         }
         else
@@ -213,13 +210,11 @@ public class StepManager : MonoBehaviour
         {
             step++;
             isMovingSlowly = true;
-            isMoveSlowlyAt0 = false;
             if (step == stepInfosNow.Count + 1)
             {
                 ResetRobotArm();
                 step = 1;
                 preStep = 0;
-                isMoveSlowlyAt0 = true;
                 return;
             }
         }
