@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class Test : MonoBehaviour
@@ -8,17 +10,13 @@ public class Test : MonoBehaviour
     public GameObject cube;
     void Start()
     {
-        
+        this.GetComponent<Text>().text = File.Exists($"{Application.dataPath}/SampleQRCodes_Data/Resources/StepInfoPrefabs.txt").ToString();
+        //File.Exists($"{Application.dataPath}/Resources/StepInfoPrefabs.txt").ToString()
     }
 
     // Update is called once per frame
     void Update()
     {
-        cube.transform.position = new Vector3(2, 0, 0);
-        RaycastHit hit;
-        if(Physics.Raycast(this.transform.position, Vector3.right * 3, out hit, 3))
-        {
-            print(hit.collider.name);
-        }
+        
     }
 }
