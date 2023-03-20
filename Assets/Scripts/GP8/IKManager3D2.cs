@@ -599,6 +599,7 @@ public class IKManager3D2 : MonoBehaviour
 
     public void SearchItemCatchable(bool isKeyRequired = true)
     {
+        print("A");
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
                        joints[joints.Length - 1].transform.position, Color.red);

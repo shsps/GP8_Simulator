@@ -17,8 +17,10 @@ public class ButtonManager : MonoBehaviour
     public List<Color> tutorialBtnMaterials = new List<Color>();
     public List<GameObject> grabBtn = new List<GameObject>();
     public List<Color> grabBtnMaterials = new List<Color>();
-    public PressableButton[] buttonsOfSteps = new PressableButton[3];
+    public PressableButton[] buttonsOfSteps = new PressableButton[4];
     public int actionType = 0;
+    int x = 0;
+    [SerializeField] int y = 0;
     public PressableButton test;
     public GameObject teachingText;
     public GameObject armForTest,steps;
@@ -109,30 +111,61 @@ public class ButtonManager : MonoBehaviour
         {
             b.ButtonPressed.AddListener(() =>
             {
-                if(b.name == "ChangeActionType")
+                if (b.name == "PreviousActionType")
                 {
-                    /*foreach(GameObject btr in buttons)
+                    if (y == 0)
                     {
-                        ButtonRelease(btr.GetComponent<MeshRenderer>());
-                    }*/
+                        if (ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
+                        {
+                            ik.SearchItemCatchable();
+                        }
+                        print("reset");
+                        StepManager.instance.ResetRobotArm();
+                        y++;
+                    }
+                    actionType--;
+                    if (actionType < 0) actionType = 0;
                     ResetBtns();
-                    try
+                    StepManager.instance.ChangeStepOrder(-1);
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                    ButtonToPress();
+                    teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                    teachingText.GetComponent<TutorialBoard>().ChangeTitle();
+                    y = 0;
+                }
+                if (b.name == "NextActionType")
+                {
+                    actionType++;
+                    ResetBtns();
+                    if (actionType > 2/*動作組數*/) actionType = 2;
+                    if (actionType != 2)
                     {
-                        StepManager.instance.ChangeStepOrder(++actionType);
                         StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
-                        ButtonToPress();
-                        teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Next);
-                        teachingText.GetComponent<TutorialBoard>().ChangeTitle();
+                        if (y == 0)
+                        {
+                            print(ik.catchStatusNow.ToString());
+                            if(ik.catchStatusNow.ToString()=="Catch")
+                            {
+                                ik.SearchItemCatchable();
+                            }
+                            StepManager.instance.ResetRobotArm();
+                            y++;
+                        }
                     }
-                    catch(System.IndexOutOfRangeException e)
+                    else
                     {
-                        actionType = 0;
-                        StepManager.instance.ChangeStepOrder(actionType);
-                        StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
-                        ButtonToPress();
-                        teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
-                        teachingText.GetComponent<TutorialBoard>().ChangeTitle();
+                        if(y==0)
+                        {
+                            print("reset");
+                            StepManager.instance.ResetRobotArm();
+                            y++;
+                        }
                     }
+                    StepManager.instance.ChangeStepOrder(1);
+                    ButtonToPress();
+                    teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Next);
+                    teachingText.GetComponent<TutorialBoard>().ChangeTitle();
+                    y = 0;
                 }
                 if(b.name == "PreviousStep")//TODO:Back To Previous Press Button
                 {
@@ -182,7 +215,17 @@ public class ButtonManager : MonoBehaviour
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
         }
-        StepManager.instance.MoveNextSlowly();
+        //print(ik.catchStatusNow);
+        if(actionType!=2)
+        {
+            StepManager.instance.MoveNextSlowly();//根據設定秒數，在時間內移至指定位置
+        }
+        if(x==0)
+        {
+            GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
+            ButtonToPress();
+            x++;
+        }
         foreach (PressableButton b in buttonsHoloLens2)//Continue
         {
             if(b.IsPressing)
@@ -273,15 +316,15 @@ public class ButtonManager : MonoBehaviour
             case 1:
                 GrabButtonToPress();
                 break;
+            case 2:
+                FreeMode();
+                break;
         }
-
-
     }
 
     public void TutorialButtonToPress()//Tutorial
     {
         int nowStep = GameObject.Find("StepManager").GetComponent<StepManager>().step;
-        //print(nowStep);//OK
         switch (nowStep)
         {
             case 0:
@@ -317,35 +360,52 @@ public class ButtonManager : MonoBehaviour
 
     public void GrabButtonToPress()//TODO:Insert Real Step
     {
-        switch (GameObject.Find("StepManager").GetComponent<StepManager>().step)
+        int nowStep = GameObject.Find("StepManager").GetComponent<StepManager>().step;
+        switch (nowStep)
         {
             case 0:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[2].GetComponent<MeshRenderer>());
                 break;
             case 1:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[1].GetComponent<MeshRenderer>());
                 break;
             case 2:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[4].GetComponent<MeshRenderer>());
                 break;
             case 3:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[0].GetComponent<MeshRenderer>());
                 break;
             case 4:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[3].GetComponent<MeshRenderer>());
                 break;
             case 5:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[1].GetComponent<MeshRenderer>());
                 break;
             case 6:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[4].GetComponent<MeshRenderer>());
                 break;
             case 7:
-
+                ResetBtns();
+                ButtonPressed(grabBtn[0].GetComponent<MeshRenderer>());
                 break;
-
+            /*case 8:
+                ResetBtns();
+                ButtonPressed(grabBtn[2].GetComponent<MeshRenderer>());
+                break;*/
         }
 
+    }
+
+    public void FreeMode()
+    {
+        StepManager.instance.ResetRobotArm();
     }
 
     public void ResetBtns()

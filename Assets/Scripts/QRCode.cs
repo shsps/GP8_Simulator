@@ -34,6 +34,7 @@ namespace QRTracking
         private long lastTimeStamp = 0;
         Vector3 v = new Vector3(270, 0, 0);
         public static int a = 0;
+        int x = 0;
         public static bool test = false;
         //public Text debug;
 
@@ -90,6 +91,13 @@ namespace QRTracking
 
         void UpdatePropertiesDisplay()
         {
+            /*StepManager.instance.MoveNextSlowly();
+            if (x == 0)
+            {
+                GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
+                //GameObject.Find("Plane").GetComponent<ButtonManager> ButtonToPress();
+                x++;
+            }*/
             // Update properties that change
             if (qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)
             {
@@ -120,7 +128,6 @@ namespace QRTracking
 
                     ShowError.text = StepManagerController.activeSelf.ToString();
 
-                    StepManager.instance.MoveNextSlowly();//Maybe this will have bug
                 }
                 //ShowError.text = Base.activeSelf.ToString();
                 a = 0;
@@ -136,6 +143,11 @@ namespace QRTracking
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
                 a++;
+            }
+
+            if(a==4)
+            {
+                StepManager.instance.ResetCatchableItemOrigin();
             }
             //JointRotation.transform.rotation = Quaternion.Euler(90,0,0);
             /*if(this.transform.rotation != Quaternion.Euler(v))

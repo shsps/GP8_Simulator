@@ -10,7 +10,8 @@ public class TutorialBoard : MonoBehaviour
     private string[][] textArray =
     {
         new string[] {"按下X+可向右移動", "按下X-可向左移動", "按下Y+可向上移動", "按下Y-可向下移動", "按下Z+可向前移動", "按下Z-可向後移動"},
-        new string[] {"第一步:移動到方塊正上方，並按下輸入", "第二步:向下移動到可夾取範圍，", "第三步:按下夾取按鈕", "第四步", "第五步", "第六步", "第七步", "第八步" }
+        new string[] {"第一步:移動到方塊正上方", "第二步:向下移動到可夾取範圍，", "第三步:按下夾取按鈕(此處以協助鈕代替)", "第四步:向上移動", "第五步:前進至欲放置之位置", "第六步:放開夾爪(此處以協助鈕代替)", "第七步:向上移動", "第八步:回至原點" },
+        new string[] {"請依照剛剛教學之步驟進行輸入" }
     };
     public int TextArrayOrder = 0;
     public int TextOrder = 0;
@@ -80,6 +81,9 @@ public class TutorialBoard : MonoBehaviour
                 break;
             case 1:
                 title.text = "夾取及紀錄教學";
+                break;
+            case 2:
+                title.text = "自由模式";
                 break;
         }
     }
