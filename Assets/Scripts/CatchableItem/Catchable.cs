@@ -12,15 +12,15 @@ public abstract class Catchable : MonoBehaviour
 
     public virtual void SetOrigin()
     {
-        OriginPosition = this.transform.position;
-        OriginRotation = this.transform.rotation;
+        OriginPosition = this.transform.localPosition;
+        OriginRotation = this.transform.localRotation;
         GetComponent<Rigidbody>().freezeRotation = true;
     }
 
     public virtual void Init()
     {
-        this.transform.position = OriginPosition;
-        this.transform.rotation = OriginRotation;
+        this.transform.localPosition = OriginPosition;
+        this.transform.localRotation = OriginRotation;
     }
 
     public abstract void Catch(GameObject tool);
