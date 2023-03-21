@@ -133,6 +133,10 @@ public class ButtonManager : MonoBehaviour
                         GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
                         ButtonToPress();
                         GameObject.Find("StepManager").GetComponent<StepManager>().step = 1;
+                        for(int i =0; i<6;i++)
+                        {
+                            teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                        }
                     }
                     StepManager.instance.ChangeStepOrder(-1);
                     //StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);

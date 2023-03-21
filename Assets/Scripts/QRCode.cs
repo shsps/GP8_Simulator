@@ -123,17 +123,20 @@ namespace QRTracking
                     Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置OK
                     Base.transform.localScale = new Vector3(100, 100, 100);//機械手臂基座大小OK
                     Arm.SetActive(true);
-                    Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);//
-                    //Arm.GetComponent<IKManager3D2>().Init();//在哪不影響
+                    /////here
+                    
                     a = 0;
 
                     StepManagerController.SetActive(true);
 
+                    StepManager.instance.ResetRobotArm();
+                    Arm.GetComponent<IKManager3D2>().InitPositionRotation();
                 }
                 a = 0;
             }
 
             Base.transform.rotation = Quaternion.Euler(0, 0, 0);//OK
+            Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);//////////////////
             //Arm.transform.rotation = Quaternion.Euler(0,0,0);
 
             if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
@@ -144,7 +147,7 @@ namespace QRTracking
                 a++;
             }
 
-            if(a==4)
+            if(a==4&&!(qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks))
             {
                 StepManager.instance.ResetCatchableItemOrigin();
                 a++;
