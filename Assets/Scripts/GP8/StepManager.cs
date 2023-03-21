@@ -114,6 +114,11 @@ public class StepManager : MonoBehaviour
         changeOrder = changeOrder > 0 ? 1 : -1;
         stepOrder += changeOrder;
 
+        if(stepInfosNow[0].Ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
+        {
+            stepInfosNow[0].Ik.ForceReleaseItem();
+        }
+
         ResetRobotArm();
         stepInfosNow.Clear();
         stepInfosNow = new List<StepInfo>(stepInfosList[stepOrder]);

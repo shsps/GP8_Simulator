@@ -76,6 +76,8 @@ public class IKManager3D2 : MonoBehaviour
     private Quaternion[] originRotation;
     private Vector3[] originPosition;
 
+    private Catchable catchItemNow;
+
     public IKManager3D2()
     {
     }
@@ -615,6 +617,7 @@ public class IKManager3D2 : MonoBehaviour
             {
                 if(hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
+                    catchItemNow = c;
                     if (!c.IsCatching)
                     {
                         c.Catch(joints[joints.Length - 2].gameObject);
@@ -638,6 +641,7 @@ public class IKManager3D2 : MonoBehaviour
                 //print(memberName);
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
+                    catchItemNow = c;
                     if (!c.IsCatching)
                     {
                         c.Catch(joints[joints.Length - 2].gameObject);
@@ -656,6 +660,14 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    public void ForceReleaseItem()
+    {
+        if (catchItemNow == null) return;
+        
+        catchItemNow.Release();
+        catchStatusNow = CatchStatus.None;
+        IsCatchPressed = false;
+    }
 }
 
 public static class MathfExtension
