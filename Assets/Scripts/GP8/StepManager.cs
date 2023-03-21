@@ -10,7 +10,7 @@ public class StepManager : MonoBehaviour
     [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
     [SerializeField] private int stepOrder = 0;
     public int step = 0;
-    private int preStep = 0;
+    [SerializeField] private int preStep = 0;
     public enum changeStepDirection
     {
         positive,
@@ -117,8 +117,9 @@ public class StepManager : MonoBehaviour
         ResetRobotArm();
         stepInfosNow.Clear();
         stepInfosNow = new List<StepInfo>(stepInfosList[stepOrder]);
-        step = 0;
         isMovingSlowly = false;
+        step = 0;
+        preStep = 0;
     }
 
     public void AddStep(IKManager3D2 ik)
@@ -164,7 +165,6 @@ public class StepManager : MonoBehaviour
         {
             step = step == 0 ? stepInfosNow.Count : step - 1;
         }
-        print(step);
 
         if(step == 0)
         {
