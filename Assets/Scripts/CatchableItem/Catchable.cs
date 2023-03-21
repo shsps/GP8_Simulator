@@ -21,6 +21,7 @@ public abstract class Catchable : MonoBehaviour
     {
         this.transform.localPosition = OriginPosition;
         this.transform.localRotation = OriginRotation;
+
     }
 
     public abstract void Catch(GameObject tool);
