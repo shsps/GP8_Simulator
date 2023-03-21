@@ -802,6 +802,11 @@ PrefabInstance:
       propertyPath: RotateSpeed
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 8568150987226995974, guid: aa2339beb8f13e249b45929d0c7c31b8,
+        type: 3}
+      propertyPath: m_Name
+      value: JointS
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa2339beb8f13e249b45929d0c7c31b8, type: 3}
 --- !u!1001 &1142137461
