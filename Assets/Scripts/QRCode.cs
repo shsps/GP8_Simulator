@@ -136,15 +136,12 @@ namespace QRTracking
                     StepManager.instance.ResetRobotArm();
                     Arm.GetComponent<IKManager3D2>().InitPositionRotation();
 
-                    Circle.SetActive(true);
-                    Cube.SetActive(true);
                 }
                 a = 0;
             }
 
             Base.transform.rotation = Quaternion.Euler(0, 0, 0);//OK
             Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
-            //Arm.transform.rotation = Quaternion.Euler(0,0,0);
 
             if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
@@ -157,6 +154,17 @@ namespace QRTracking
                 StepManager.instance.ResetCatchableItemOrigin();
                 a++;
             }
+
+            //if(StepManager.instance.stepOrder>=1)
+            //{
+            //    Circle.transform.rotation = Quaternion.Euler(0, 0, 0);
+            //    Cube.transform.rotation = Quaternion.Euler(0, 0, 0);
+            //    Circle.transform.position = new Vector3(Base.transform.position.x/*+ -0.0005580051f*/, Base.transform.position.y/*+ 0.00467575f*/, Base.transform.position.z/*+ 0.004474002f*/);
+            //    Cube.transform.position = new Vector3(Base.transform.position.x /*+ 0.00001999899f*/, Base.transform.position.y/* + 0.00467575f*/, Base.transform.position.z/* + 0.004481002f*/);
+            //    ShowError.text = Circle.transform.position.x.ToString();
+            //    Circle.SetActive(true);
+            //    Cube.SetActive(true);
+            //}
             //JointRotation.transform.rotation = Quaternion.Euler(90,0,0);
             /*if(this.transform.rotation != Quaternion.Euler(v))
             {
@@ -164,7 +172,7 @@ namespace QRTracking
             }*/
             //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();
             //debug.text = this.transform.rotation.x.ToString() +" "+ this.transform.rotation.y.ToString() +" "+ this.transform.rotation.z.ToString();
-            ShowError.text = a.ToString() ;
+            //ShowError.text = a.ToString() ;
         }
 
         // Update is called once per frame

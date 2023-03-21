@@ -8,7 +8,7 @@ public class StepManager : MonoBehaviour
     private List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
     public List<StepInfo> stepInfos = new List<StepInfo>();
     [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
-    [SerializeField] private int stepOrder = 0;
+    [SerializeField] public int stepOrder = 0;//private
     public int step = 0;
     [SerializeField] private int preStep = 0;
     public enum changeStepDirection
