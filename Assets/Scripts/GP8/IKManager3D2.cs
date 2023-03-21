@@ -138,7 +138,11 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[0] = Vector3.Distance(xjoints[0].transform.position, xjoints[1].transform.position);
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
-        //StepManager.instance.AddStep(this);
+        InitPositionRotation();
+    }
+
+    public void InitPositionRotation()
+    {
         originRotation = new Quaternion[joints.Length];
         originPosition = new Vector3[joints.Length];
         for (int i = 0; i < originRotation.Length; i++)
@@ -599,7 +603,6 @@ public class IKManager3D2 : MonoBehaviour
 
     public void SearchItemCatchable(bool isKeyRequired = true)
     {
-        print("A");
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
                        joints[joints.Length - 1].transform.position, Color.red);
