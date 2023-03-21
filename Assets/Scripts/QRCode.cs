@@ -14,6 +14,7 @@ namespace QRTracking
         public GameObject Base/*手臂基座*/,Arm/*自定義手臂*/,Default;
         public GameObject JointRotation;
         public GameObject StepManagerController;
+        public GameObject Circle, Cube;//欲夾物體
         //public GameObject DefaultThings;//桌子，板子，要夾的物品
         //public GameObject qrPosition;//自定義父物件
 
@@ -70,6 +71,9 @@ namespace QRTracking
             ShowError = QRInfo.transform.Find("ShowError").gameObject.GetComponent<TextMesh>();
 
             StepManagerController = gameObject.transform.Find("StepManager").gameObject;
+
+            Circle = gameObject.transform.Find("圓形").gameObject;
+            Cube = gameObject.transform.Find("方塊").gameObject;
 
             //DefaultThings = gameObject.transform.Find("DefaultThings").gameObject;
 
@@ -131,6 +135,9 @@ namespace QRTracking
 
                     StepManager.instance.ResetRobotArm();
                     Arm.GetComponent<IKManager3D2>().InitPositionRotation();
+
+                    Circle.SetActive(true);
+                    Cube.SetActive(true);
                 }
                 a = 0;
             }
@@ -142,8 +149,6 @@ namespace QRTracking
             if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
-                //under
-                //up
                 a++;
             }
 

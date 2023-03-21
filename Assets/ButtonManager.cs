@@ -19,6 +19,7 @@ public class ButtonManager : MonoBehaviour
     public List<Color> grabBtnMaterials = new List<Color>();
     public PressableButton[] buttonsOfSteps = new PressableButton[4];
     public int actionType = 0;
+    public GameObject circle, cube;
     int x = 0;
     [SerializeField] int y = 0;
     public PressableButton test;
@@ -92,13 +93,14 @@ public class ButtonManager : MonoBehaviour
             {
                 if (b.name == "PreviousActionType")
                 {
+                    /*if (ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
+                    {
+                        print("上一套放開");
+                        ik.SearchItemCatchable();
+                        StepManager.instance.ResetCatchableItemOrigin();
+                    }*/
                     if (y == 0)
                     {
-                        if (ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
-                        {
-                            print("放開");
-                            ik.SearchItemCatchable();
-                        }
                         print("reset");
                         StepManager.instance.ResetRobotArm();
                         y++;
@@ -141,6 +143,12 @@ public class ButtonManager : MonoBehaviour
                 }
                 if (b.name == "NextActionType")
                 {
+                    /*if(ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
+                    {
+                        print("下一套放開");
+                        ik.SearchItemCatchable();
+                        StepManager.instance.ResetCatchableItemOrigin();
+                    }*/
                     actionType++;
                     ResetBtns();
                     if (actionType > 2/*動作組數*/) actionType = 2;
@@ -150,10 +158,6 @@ public class ButtonManager : MonoBehaviour
                         if (y == 0)
                         {
                             print(ik.catchStatusNow.ToString());
-                            if(ik.catchStatusNow.ToString()=="Catch")
-                            {
-                                ik.SearchItemCatchable();
-                            }
                             StepManager.instance.ResetRobotArm();
                             y++;
                         }
@@ -195,6 +199,8 @@ public class ButtonManager : MonoBehaviour
                 steps.SetActive(true);
                 steps.name = "StepManager";
                 //QRTracking.QRCode.test = true;
+                circle.SetActive(true);
+                cube.SetActive(true);
             });
 
             test.ButtonReleased.AddListener(() =>
