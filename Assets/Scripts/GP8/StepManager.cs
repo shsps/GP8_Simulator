@@ -118,6 +118,7 @@ public class StepManager : MonoBehaviour
         stepInfosNow.Clear();
         stepInfosNow = new List<StepInfo>(stepInfosList[stepOrder]);
         step = 0;
+        isMovingSlowly = false;
     }
 
     public void AddStep(IKManager3D2 ik)
@@ -163,6 +164,7 @@ public class StepManager : MonoBehaviour
         {
             step = step == 0 ? stepInfosNow.Count : step - 1;
         }
+        print(step);
 
         if(step == 0)
         {

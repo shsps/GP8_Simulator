@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using ArrayExtension;
 using UnityEngine.UI;
+using System.Runtime.CompilerServices;
 
 public class IKManager3D2 : MonoBehaviour
 {
@@ -597,7 +598,7 @@ public class IKManager3D2 : MonoBehaviour
         throw new UnityException($"There isn't any joint called {name}");
     }
 
-    public void SearchItemCatchable(bool isKeyRequired = true)
+    public void SearchItemCatchable(bool isKeyRequired = true, [CallerMemberName] string memberName = "")
     {
         print("A");
         RaycastHit hit;
@@ -631,6 +632,7 @@ public class IKManager3D2 : MonoBehaviour
         {
             if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
+                //print(memberName);
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
                     if (!c.IsCatching)
