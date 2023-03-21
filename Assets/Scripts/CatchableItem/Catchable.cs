@@ -10,6 +10,8 @@ public abstract class Catchable : MonoBehaviour
 
     public Quaternion OriginRotation;
 
+    public GameObject ParentGameObject;
+
     public virtual void SetOrigin()
     {
         OriginPosition = this.transform.position;
