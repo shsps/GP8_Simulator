@@ -10,12 +10,12 @@ public class Test : MonoBehaviour
     public GameObject cube;
     void Start()
     {
-        
     }
 
     // Update is called once per frame
     void Update()
     {
+        this.transform.position = cube.transform.position + new Vector3(0, 0, 3);
         
     }
 }

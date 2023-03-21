@@ -15,7 +15,14 @@ public class Cube : Catchable
 
     public override void Release()
     {
-        this.transform.parent = null;
+        if(ParentGameObject != null)
+        {
+            this.transform.parent = ParentGameObject.transform;
+        }
+        else
+        {
+            this.transform.parent = null;
+        }
         this.GetComponent<Rigidbody>().useGravity = true;
         IsCatching = false;
     }
