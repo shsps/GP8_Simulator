@@ -50,33 +50,11 @@ public class ButtonManager : MonoBehaviour
                 grabBtn.Add(btn);
                 grabBtnMaterials.Add(btn.GetComponent<MeshRenderer>().materials[0].color);
             }
-            /*string tmp = btn.GetComponent<MeshRenderer>().materials[0].name.Substring(0, 2);
-            if (tmp=="白色"||tmp=="藍色")
-            {
-                    buttons.Add(btn);
-            }*/
         }
         foreach(GameObject btg in buttons)
         {
-            /*btg.AddComponent<BoxCollider>();
-            PressableButton btgap = btg.AddComponent<PressableButton>();
-            btg.AddComponent<NearInteractionTouchable>();*/
-            /*btgap.ButtonPressed.AddListener(() =>
-            {*/
-                //ButtonPressed(btg.GetComponent<MeshRenderer>());//Change Color
-            //});
+
         }
-        /*foreach(GameObject g in buttons)
-        {
-            print(g.name);
-            PressableButton btg = g.GetComponent<PressableButton>();
-            btg.ButtonPressed.AddListener(() =>
-            {
-                ButtonPressed(g.GetComponent<MeshRenderer>());
-            });
-        }*/
-        //armForTest = gameObject.transform.Find("JointS(Scene)").gameObject;
-        //教導盒
         foreach (PressableButton b in buttonsHoloLens2)
         {
             b.ButtonPressed.AddListener(() =>
@@ -133,18 +111,33 @@ public class ButtonManager : MonoBehaviour
                         GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
                         ButtonToPress();
                         GameObject.Find("StepManager").GetComponent<StepManager>().step = 1;
-                        for(int i =0; i<6;i++)
+                        for(int i =0; i< /*GameObject.Find("StepManager").GetComponent<StepManager>().step-*/6; i++)
                         {
-                            teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                            try
+                            {
+                                teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                            }
+                            catch
+                            {
+
+                            }
                         }
                     }
-                    StepManager.instance.ChangeStepOrder(-1);
+
+                    /*try 
+                    {*/
+                        StepManager.instance.ChangeStepOrder(-1);
+                    /*}
+                    finally
+                    {*/
+                        ButtonToPress();
+                        teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                        teachingText.GetComponent<TutorialBoard>().ChangeTitle();
+                        y = 0;
+                    //}
+                    
                     //StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     //StepManager.instance.MoveNextSlowly();///////////////
-                    ButtonToPress();
-                    teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
-                    teachingText.GetComponent<TutorialBoard>().ChangeTitle();
-                    y = 0;
                 }
                 if (b.name == "NextActionType")
                 {

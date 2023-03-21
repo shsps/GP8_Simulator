@@ -136,7 +136,7 @@ namespace QRTracking
             }
 
             Base.transform.rotation = Quaternion.Euler(0, 0, 0);//OK
-            Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);//////////////////
+            Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
             //Arm.transform.rotation = Quaternion.Euler(0,0,0);
 
             if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
@@ -147,7 +147,7 @@ namespace QRTracking
                 a++;
             }
 
-            if(a==4&&!(qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks))
+            if(a==4/*&&!(qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)*/)
             {
                 StepManager.instance.ResetCatchableItemOrigin();
                 a++;
