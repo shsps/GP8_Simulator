@@ -9,11 +9,12 @@ using UnityEngine.EventSystems;
 public class RemoteAction : MonoBehaviour
 {
     public GameObject panel;
-    Rigidbody pr;
-    [SerializeField] bool tXNegative = false;
+    /*Rigidbody pr;
+    [SerializeField] bool tXNegative = false;*/
     //[SerializeField] private PressableButtonHoloLens2 buttonTXN;
-    [SerializeField] private IKManager3D2 ik;
-    public Text txt,debug;
+    //[SerializeField] private IKManager3D2 ik;
+    public Text txt;
+    public string debug="";
     // Start is called before the first frame update
     void Start()
     {
@@ -27,23 +28,34 @@ public class RemoteAction : MonoBehaviour
                 tXNegative = false;
             });*/
         txt.text = "X-S- X+S+:沿x軸方向直線移動\nY - L - Y + L +:沿y軸方向直線移動\nZ - U - Z + U +:沿z軸方向直線移動\n協助:夾取物件\n輸入:紀錄當前座標\n測試運轉:依據輸入紀錄順序運行至下個記錄點";
-        panel = gameObject.transform.Find("底座").gameObject;
+        //panel = gameObject.transform.Find("底座").gameObject;
         //print(pr);
     }
 
     // Update is called once per frame
     void Update()
     {
-        pr = panel.GetComponent<Rigidbody>();
+        txt = GameObject.Find("RText").GetComponent<Text>();
+        /*pr = panel.GetComponent<Rigidbody>();
         if(pr!=null)
         {
             Destroy(panel.GetComponent<Rigidbody>());
+        }*/
+        if (debug == "")
+        {
+            txt.text = "Default";
         }
-        
+            if (debug!="")
+        {
+            txt.text = debug;
+        }
     }
 
     public void PrintSomething(string s)
     {
-        debug.text = s;
+        //debug.text = s;
+        print(s);
+        debug= s;
+        txt.text = s ;
     }
 }

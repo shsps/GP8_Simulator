@@ -11,7 +11,7 @@ namespace QRTracking
     {
         public Microsoft.MixedReality.QR.QRCode qrCode;
         private GameObject qrCodeCube;
-        public GameObject Base/*手臂基座*/,Arm;//自定義手臂
+        public GameObject Base/*手臂基座*/,Arm/*自定義手臂*/,Default;
         public GameObject JointRotation;
         public GameObject StepManagerController;
         //public GameObject DefaultThings;//桌子，板子，要夾的物品
@@ -55,6 +55,7 @@ namespace QRTracking
             qrCodeCube = gameObject.transform.Find("Cube").gameObject;
             Base = gameObject.transform.Find("GP8_3D").gameObject;
             Arm = Base.transform.Find("JointS").gameObject;//prefab內物件
+            Default = Base.transform.Find("DefaultThings").gameObject;
             //qrPosition = this.gameObject;//自定義父物件
             //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();//Debug
             //JointRotation = gameObject.transform.Find("JointRotation").gameObject;
@@ -115,39 +116,41 @@ namespace QRTracking
                 QRInfo.transform.localScale = new Vector3(PhysicalSize/0.2f, PhysicalSize / 0.2f, PhysicalSize / 0.2f);
 
 
-                if (QRText.text == "50872"||test)
+                if (QRText.text == "50872"/*||test*/)
                 {
                     Base.SetActive(true);
-                    Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置
-                    Base.transform.localScale = new Vector3(100, 100, 100);//機械手臂基座大小
-                    Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
-                    Arm.GetComponent<IKManager3D2>().Init();
+                    Default.SetActive(true);
+                    Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置OK
+                    Base.transform.localScale = new Vector3(100, 100, 100);//機械手臂基座大小OK
+                    Arm.SetActive(true);
+                    /////here
+                    
                     a = 0;
 
                     StepManagerController.SetActive(true);
 
-                    ShowError.text = StepManagerController.activeSelf.ToString();
-
+                    StepManager.instance.ResetRobotArm();
+                    Arm.GetComponent<IKManager3D2>().InitPositionRotation();
                 }
-                //ShowError.text = Base.activeSelf.ToString();
                 a = 0;
             }
 
-            Base.transform.rotation = Quaternion.Euler(0, 0, 0);
+            Base.transform.rotation = Quaternion.Euler(0, 0, 0);//OK
+            Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
             //Arm.transform.rotation = Quaternion.Euler(0,0,0);
-
-            /*DefaultThings.transform.localPosition = new Vector3(0, 0, 0);
-            DefaultThings.transform.rotation = Quaternion.Euler(0, 0, 0);*/
 
             if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
+                //under
+                //up
                 a++;
             }
 
-            if(a==4)
+            if(a==4/*&&!(qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)*/)
             {
                 StepManager.instance.ResetCatchableItemOrigin();
+                a++;
             }
             //JointRotation.transform.rotation = Quaternion.Euler(90,0,0);
             /*if(this.transform.rotation != Quaternion.Euler(v))
@@ -156,6 +159,7 @@ namespace QRTracking
             }*/
             //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();
             //debug.text = this.transform.rotation.x.ToString() +" "+ this.transform.rotation.y.ToString() +" "+ this.transform.rotation.z.ToString();
+            ShowError.text = a.ToString() ;
         }
 
         // Update is called once per frame
