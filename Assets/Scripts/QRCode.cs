@@ -72,8 +72,8 @@ namespace QRTracking
 
             StepManagerController = gameObject.transform.Find("StepManager").gameObject;
 
-            Circle = gameObject.transform.Find("圓形").gameObject;
-            Cube = gameObject.transform.Find("方塊").gameObject;
+            /*Circle = gameObject.transform.Find("圓形").gameObject;
+            Cube = gameObject.transform.Find("方塊").gameObject;*/
 
             //DefaultThings = gameObject.transform.Find("DefaultThings").gameObject;
 
@@ -151,20 +151,21 @@ namespace QRTracking
 
             if(a==4/*&&!(qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)*/)
             {
-                StepManager.instance.ResetCatchableItemOrigin();
+                StepManager.instance.ResetCatchableItemOrigin();//紀錄初始點
                 a++;
             }
 
-            //if(StepManager.instance.stepOrder>=1)
-            //{
-            //    Circle.transform.rotation = Quaternion.Euler(0, 0, 0);
-            //    Cube.transform.rotation = Quaternion.Euler(0, 0, 0);
-            //    Circle.transform.position = new Vector3(Base.transform.position.x/*+ -0.0005580051f*/, Base.transform.position.y/*+ 0.00467575f*/, Base.transform.position.z/*+ 0.004474002f*/);
-            //    Cube.transform.position = new Vector3(Base.transform.position.x /*+ 0.00001999899f*/, Base.transform.position.y/* + 0.00467575f*/, Base.transform.position.z/* + 0.004481002f*/);
-            //    ShowError.text = Circle.transform.position.x.ToString();
-            //    Circle.SetActive(true);
-            //    Cube.SetActive(true);
-            //}
+            if(StepManager.instance.stepOrder >= 1)
+            {
+                //Circle.transform.rotation = Quaternion.Euler(0, 0, 0);
+                //Cube.transform.rotation = Quaternion.Euler(0, 0, 0);
+                //Circle.transform.position = new Vector3(Base.transform.position.x/*+ -0.0005580051f*/, Base.transform.position.y/*+ 0.00467575f*/, Base.transform.position.z/*+ 0.004474002f*/);
+                //Cube.transform.position = new Vector3(Base.transform.position.x /*+ 0.00001999899f*/, Base.transform.position.y/* + 0.00467575f*/, Base.transform.position.z/* + 0.004481002f*/);
+                //ShowError.text = Circle.transform.position.x.ToString();
+                /*Circle.SetActive(true);
+                Cube.SetActive(true);*/
+            }
+
             //JointRotation.transform.rotation = Quaternion.Euler(90,0,0);
             /*if(this.transform.rotation != Quaternion.Euler(v))
             {
