@@ -39,6 +39,7 @@ public class Joint : MonoBehaviour
         }
     }
     [SerializeField] private float _jointAngle;
+    private float oriJointAngle;
     public float AngleForCaculate
     {
         get
@@ -59,15 +60,16 @@ public class Joint : MonoBehaviour
         switch(rotateAxis)
         {
             case RotateAxis.X:
-                _jointAngle = this.transform.localRotation.eulerAngles.x;
+                oriJointAngle = this.transform.localRotation.eulerAngles.x;
                 break;
             case RotateAxis.Y:
-                _jointAngle = this.transform.localRotation.eulerAngles.y;
+                oriJointAngle = this.transform.localRotation.eulerAngles.y;
                 break;
             case RotateAxis.Z:
-                _jointAngle = this.transform.localRotation.eulerAngles.z;
+                oriJointAngle = this.transform.localRotation.eulerAngles.z;
                 break;
         }
+        Init();
 
         if(m_child != null)
         {
@@ -88,6 +90,7 @@ public class Joint : MonoBehaviour
     public void Init()
     {
         _angleForCaculate = 0;
+        _jointAngle = oriJointAngle;
     }
 
     /// <summary>

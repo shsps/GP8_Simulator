@@ -382,6 +382,7 @@ public class IKManager3D2 : MonoBehaviour
 
         SearchItemCatchable();
     }
+
     public void init_MoveTool()
     {
         for (int i = 0; i < joints.Length; i++)
@@ -395,6 +396,7 @@ public class IKManager3D2 : MonoBehaviour
         MoveToolAngleZ = 0;
         IsCatchPressed = false;
     }
+
     public void MoveToolZ(float angle)
     {
         List<Exception> exceptions = new List<Exception>();
@@ -627,7 +629,6 @@ public class IKManager3D2 : MonoBehaviour
             ReadCheckPoint();
         }
     }
-
     
     /// <returns>This Vector3 means how much degrees end joint needs to rotate to Target</returns>
     private Vector3 CaculateAngleToTarget()
