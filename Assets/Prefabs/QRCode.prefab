@@ -348,6 +348,7 @@ MonoBehaviour:
   StepManagerController: {fileID: 2456043329613846215}
   Circle: {fileID: 3629136783535881824}
   Cube: {fileID: 2123500790640168940}
+  DontActiveTheArm: 0
   ShowError: {fileID: 434901352942704080}
 --- !u!114 &5292643069497550491
 MonoBehaviour:
@@ -1356,7 +1357,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3865041192669299612
 Transform:
   m_ObjectHideFlags: 0
@@ -1832,7 +1833,7 @@ MonoBehaviour:
   stepOrder: 0
   step: 0
   preStep: 0
-  moveInterval: 1
+  moveInterval: 4
   catchableItems:
   - {fileID: 622148980847009337}
   - {fileID: 4300733083942414833}

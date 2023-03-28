@@ -9352,6 +9352,7 @@ MonoBehaviour:
   IsCatching: 0
   OriginPosition: {x: 0, y: 0, z: 0}
   OriginRotation: {x: 0, y: 0, z: 0, w: 0}
+  ParentGameObject: {fileID: 0}
 --- !u!65 &314947935
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9436,12 +9437,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 5b3fc4e8df5e94741a47199229da3f9e,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.014999994
+      value: 0.0150000015
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b3fc4e8df5e94741a47199229da3f9e,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.014999994
+      value: 0.0150000015
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5b3fc4e8df5e94741a47199229da3f9e,
         type: 3}
@@ -9503,6 +9504,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u5713\u5F62"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5b3fc4e8df5e94741a47199229da3f9e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b3fc4e8df5e94741a47199229da3f9e, type: 3}
 --- !u!1 &411401254 stripped
@@ -9532,6 +9538,7 @@ MonoBehaviour:
   IsCatching: 0
   OriginPosition: {x: 0, y: 0, z: 0}
   OriginRotation: {x: 0, y: 0, z: 0, w: 0}
+  ParentGameObject: {fileID: 800354472}
 --- !u!64 &411401257
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -12260,12 +12267,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b9a7eac6b31754345bbf713408090aa1,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.014999994
+      value: 0.0150000015
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b9a7eac6b31754345bbf713408090aa1,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.014999994
+      value: 0.0150000015
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b9a7eac6b31754345bbf713408090aa1,
         type: 3}
@@ -12326,6 +12333,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: "\u65B9\u584A"
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b9a7eac6b31754345bbf713408090aa1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9a7eac6b31754345bbf713408090aa1, type: 3}
@@ -12559,6 +12571,8 @@ MonoBehaviour:
   - {fileID: 572105489}
   - {fileID: 245001140}
   actionType: 0
+  circle: {fileID: 411401254}
+  cube: {fileID: 1309377501}
   y: 0
   test: {fileID: 712788069}
   teachingText: {fileID: 509926651}
@@ -13126,6 +13140,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TutorialBoard
       objectReference: {fileID: 0}
+    - target: {fileID: 1087897228085938468, guid: a7588d2715ced544bb47e27477cb8912,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1087897228085938469, guid: a7588d2715ced544bb47e27477cb8912,
         type: 3}
       propertyPath: title
@@ -13541,6 +13560,7 @@ MonoBehaviour:
   IsCatching: 0
   OriginPosition: {x: 0, y: 0, z: 0}
   OriginRotation: {x: 0, y: 0, z: 0, w: 0}
+  ParentGameObject: {fileID: 800354472}
 --- !u!65 &1309377504
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13552,7 +13572,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.02, y: 0.019999998, z: 0.019999998}
+  m_Size: {x: 0.02, y: 0.020000007, z: 0.020000007}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1309377505
 Rigidbody:
@@ -15835,6 +15855,7 @@ MonoBehaviour:
   IsCatching: 0
   OriginPosition: {x: 0, y: 0, z: 0}
   OriginRotation: {x: 0, y: 0, z: 0, w: 0}
+  ParentGameObject: {fileID: 0}
 --- !u!65 &1582815733
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17629,6 +17650,7 @@ MonoBehaviour:
   IsCatching: 0
   OriginPosition: {x: 0, y: 0, z: 0}
   OriginRotation: {x: 0, y: 0, z: 0, w: 0}
+  ParentGameObject: {fileID: 0}
 --- !u!64 &1994694281
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -17680,6 +17702,7 @@ MonoBehaviour:
   IsCatching: 0
   OriginPosition: {x: 0, y: 0, z: 0}
   OriginRotation: {x: 0, y: 0, z: 0, w: 0}
+  ParentGameObject: {fileID: 0}
 --- !u!54 &2003222874
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -239,22 +239,22 @@ public class ButtonManager : MonoBehaviour
                 switch (b.name)
                 {
                     case "L.X+":
-                        ik.MoveToolX(0.0005f);
+                        ik.MoveToolX(0.01f);
                         break;
                     case "L.X-":
-                        ik.MoveToolX(-0.0005f);
+                        ik.MoveToolX(-0.01f);
                         break;
                     case "L.Y+":
-                        ik.MoveToolY(-0.002f);//up
+                        ik.MoveToolY(-0.025f);//up
                         break;
                     case "L.Y-":
-                        ik.MoveToolY(0.002f);//down
+                        ik.MoveToolY(0.025f);//down
                         break;
                     case "L.Z+":
-                        ik.MoveToolZ(0.002f);//forward
+                        ik.MoveToolZ(0.02f);//forward
                         break;
                     case "L.Z-":
-                        ik.MoveToolZ(-0.002f);//back
+                        ik.MoveToolZ(-0.02f);//back
                         break;
                     /*case "R.X+":
 
