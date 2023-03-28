@@ -10,6 +10,7 @@ public class Test : MonoBehaviour
     public GameObject cube;
     void Start()
     {
+        print(this.transform.position);
     }
 
     // Update is called once per frame

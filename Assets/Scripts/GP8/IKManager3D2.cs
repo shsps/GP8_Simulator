@@ -1,10 +1,7 @@
-﻿using System.Collections;
+﻿using ArrayExtension;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using ArrayExtension;
-using UnityEngine.UI;
-using System.Runtime.CompilerServices;
 
 public class IKManager3D2 : MonoBehaviour
 {
@@ -34,6 +31,7 @@ public class IKManager3D2 : MonoBehaviour
         FreeMode,
         MoveTool,
     }
+    //Only MoveTool work for now.
     public OperationMode mode = OperationMode.SingleJoint;
     private OperationMode preMode;
 
@@ -78,9 +76,24 @@ public class IKManager3D2 : MonoBehaviour
 
     private Catchable catchItemNow;
 
-    public IKManager3D2()
+    private class CheckPoint
     {
+        public Quaternion[] quaternions;
+        public float[] angles;
+        public CheckPoint(IKManager3D2 ik)
+        {
+            quaternions = new Quaternion[ik.joints.Length];
+            angles = new float[ik.joints.Length];
+
+            for (int i = 0; i < ik.joints.Length; i++)
+            {
+                quaternions[i] = ik.joints[i].transform.rotation;
+                angles[i] = ik.joints[i].AngleForCaculate;
+            }
+        }
     }
+
+    private CheckPoint checkPointNow;
 
     private void Awake()
     {
@@ -142,6 +155,8 @@ public class IKManager3D2 : MonoBehaviour
         BonesLength[1] = Vector3.Distance(xjoints[1].transform.position, xjoints[2].transform.position);
         BonesLength[2] = Vector3.Distance(xjoints[2].transform.position, joints[joints.Length - 1].transform.position);
         InitPositionRotation();
+
+        mode = OperationMode.MoveTool;
     }
 
     public void InitPositionRotation()
@@ -382,13 +397,18 @@ public class IKManager3D2 : MonoBehaviour
     }
     public void MoveToolZ(float angle)
     {
+        List<Exception> exceptions = new List<Exception>();
+        SaveCheckPoint();
+
         MoveToolAngleZ += angle;
         Plane planeForward = new Plane(GetJointFromName('E').transform.forward, Vector3.zero);
         Vector3 v1 = GetJointFromName('E').transform.position;
 
         float _LRotateAngle = angle * GetJointFromName('L').RotateSpeed;
-        GetJointFromName('L').Rotate(_LRotateAngle);
-        GetJointFromName('B').Rotate(-_LRotateAngle);
+        RotateExceptionCatcher(() => GetJointFromName('L').Rotate(_LRotateAngle), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-_LRotateAngle), exceptions);
+        //GetJointFromName('L').Rotate(_LRotateAngle);
+        //GetJointFromName('B').Rotate(-_LRotateAngle);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
 
@@ -414,33 +434,55 @@ public class IKManager3D2 : MonoBehaviour
         float thetaNUE = System.Math.Abs(theta1 - thetaPUE) < System.Math.Abs(theta2 - thetaPUE) ? (float)theta1 : (float)theta2;
         float rotateValue = thetaNUE - thetaPUE;
 
-        GetJointFromName('U').Rotate(rotateValue);
-        GetJointFromName('B').Rotate(-rotateValue);
+        RotateExceptionCatcher(() => GetJointFromName('U').Rotate(rotateValue), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
+        //GetJointFromName('U').Rotate(rotateValue);
+        //GetJointFromName('B').Rotate(-rotateValue);
 
+        //-----------------------Rectification X-Axis error-----------------------------------------------------
         Vector3 v3 = GetJointFromName('E').transform.position;
 
         Vector3 project1 = planeForward.ClosestPointOnPlane(v1 - GetJointFromName('S').transform.position);
         Vector3 project2 = planeForward.ClosestPointOnPlane(v3 - GetJointFromName('S').transform.position);
         float distance = -1 * (Vector3.Dot((v3 - v1), GetJointFromName('E').transform.right)) > 0 ? Vector3.Distance(project1, project2) : -Vector3.Distance(project1, project2);
-        if (Mathf.Abs(distance) < 0.001) return;
+        if (Mathf.Abs(distance) >= 0.001)
+        {
+            Plane planeY = new Plane(Vector3.up, Vector3.zero);
+            Vector3 project3 = planeY.ClosestPointOnPlane(GetJointFromName('E').transform.position);
+            Vector3 project4 = planeY.ClosestPointOnPlane(GetJointFromName('S').transform.position);
+            float radius = Vector3.Distance(project3, project4);
+            float angleNow = GetJointFromName('T').AngleForCaculate;
+            float roateAngleS = Mathf.Asin(distance / radius + Mathf.Sin(angleNow * Deg2Rad)) * Rad2Deg;
+            RotateExceptionCatcher(() => GetJointFromName('S').Rotate(roateAngleS - angleNow), exceptions);
+            RotateExceptionCatcher(() => GetJointFromName('T').Rotate(roateAngleS - angleNow), exceptions);
+            //GetJointFromName('S').Rotate(roateAngleS - angleNow);
+            //GetJointFromName('T').Rotate(roateAngleS - angleNow);
+        }
 
-        Plane planeY = new Plane(Vector3.up, Vector3.zero);
-        Vector3 project3 = planeY.ClosestPointOnPlane(GetJointFromName('E').transform.position);
-        Vector3 project4 = planeY.ClosestPointOnPlane(GetJointFromName('S').transform.position);
-        float radius = Vector3.Distance(project3, project4);
-        float angleNow = GetJointFromName('T').angleNow;
-        float roateAngleS = Mathf.Asin(distance / radius + Mathf.Sin(angleNow * Deg2Rad)) * Rad2Deg;
-        GetJointFromName('S').Rotate(roateAngleS - angleNow);
+        RotateExceptionCatcher(() => JointsParallelismLimitCheck(), exceptions);
+        if (exceptions.Count > 0)
+        {
+            foreach (var item in exceptions)
+            {
+                Debug.LogException(item);
+            }
+            ReadCheckPoint();
+        }
     }
 
     public void MoveToolY(float angle)
     {
+        List<Exception> exceptions = new List<Exception>();
+        SaveCheckPoint();
+
         MoveToolAngleY += angle;
         Vector3 v1 = GetJointFromName('E').transform.position;
 
         float _URotateAngle = angle * GetJointFromName('U').RotateSpeed;
-        GetJointFromName('U').Rotate(_URotateAngle);
-        GetJointFromName('B').Rotate(-_URotateAngle);
+        RotateExceptionCatcher(() => GetJointFromName('U').Rotate(_URotateAngle), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-_URotateAngle), exceptions);
+        //GetJointFromName('U').Rotate(_URotateAngle);
+        //GetJointFromName('B').Rotate(-_URotateAngle);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
         Plane plane = new Plane(Vector3.up, Vector3.zero);
@@ -462,22 +504,39 @@ public class IKManager3D2 : MonoBehaviour
         float paramentB = (-2 * (lengthLE - lengthBE * Mathf.Cos((thetaPBE - thetaPLE) * Deg2Rad)));
         float paramentC = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) + lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
 
+        //print($"{paramentA}, {paramentB}, {paramentC}");
         (double, double) result = MathfExtension.AX2BXC(paramentA, paramentB, paramentC);
+        //print(result);
 
         double theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
         double theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
 
         //choose which result is closer to thetaPLE
-        float thetaNLE = System.Math.Abs(theta1 - thetaPLE) < System.Math.Abs(theta2 - thetaPLE) ? (float)theta1 : (float)theta2;
+        float thetaNLE = System.Math.Abs(theta1 - thetaPLE) <= System.Math.Abs(theta2 - thetaPLE) ? (float)theta1 : (float)theta2;
         float thetaNBE = thetaPBE - (thetaNLE - thetaPLE);
 
         float rotateValue = thetaNLE - thetaPLE;
-        GetJointFromName('L').Rotate(rotateValue);
-        GetJointFromName('B').Rotate(-rotateValue);
+        RotateExceptionCatcher(() => GetJointFromName('L').Rotate(rotateValue), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
+        //GetJointFromName('L').Rotate(rotateValue);
+        //GetJointFromName('B').Rotate(-rotateValue);
+
+        RotateExceptionCatcher(() => JointsParallelismLimitCheck(), exceptions);
+        if (exceptions.Count > 0)
+        {
+            foreach (var item in exceptions)
+            {
+                Debug.LogException(item);
+            }
+            ReadCheckPoint();
+        }
     }
 
     public void MoveToolX(float angle)
     {
+        List<Exception> exceptions = new List<Exception>();
+        SaveCheckPoint();
+
         MoveToolAngleX += angle;
         Plane plane = new Plane(Vector3.up, Vector3.zero);
         Vector3 project1 = plane.ClosestPointOnPlane(GetJointFromName('E').transform.position);
@@ -485,10 +544,12 @@ public class IKManager3D2 : MonoBehaviour
         float radiusNow = Vector3.Distance(project1, project2);
 
         float rotateAngleS = angle * GetJointFromName('S').RotateSpeed;
-        float preAngleT = GetJointFromName('T').angleNow;
-        GetJointFromName('S').Rotate(rotateAngleS);
-        GetJointFromName('T').Rotate(rotateAngleS);
-        float afterAngleT = GetJointFromName('T').angleNow;
+        float preAngleT = GetJointFromName('T').AngleForCaculate;
+        RotateExceptionCatcher(() => GetJointFromName('S').Rotate(rotateAngleS), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('T').Rotate(rotateAngleS), exceptions);
+        //GetJointFromName('S').Rotate(rotateAngleS);
+        //GetJointFromName('T').Rotate(rotateAngleS);
+        float afterAngleT = GetJointFromName('T').AngleForCaculate;
 
         float deltaHorizontalDistance = radiusNow * (Mathf.Cos(preAngleT * Deg2Rad) / Mathf.Cos((afterAngleT) * Deg2Rad) - 1);
 
@@ -519,8 +580,10 @@ public class IKManager3D2 : MonoBehaviour
         float thetaNLE = System.Math.Abs(theta1 - thetaPLE) < System.Math.Abs(theta2 - thetaPLE) ? (float)theta1 : (float)theta2;
 
         float rotateValue = thetaNLE - thetaPLE;
-        GetJointFromName('L').Rotate(rotateValue);
-        GetJointFromName('B').Rotate(-rotateValue);
+        RotateExceptionCatcher(() => GetJointFromName('L').Rotate(rotateValue), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
+        //GetJointFromName('L').Rotate(rotateValue);
+        //GetJointFromName('B').Rotate(-rotateValue);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
 
@@ -549,8 +612,20 @@ public class IKManager3D2 : MonoBehaviour
         float thetaNUE = System.Math.Abs(theta1 - thetaPUE) < System.Math.Abs(theta2 - thetaPUE) ? (float)theta1 : (float)theta2;
         rotateValue = thetaNUE - thetaPUE;
 
-        GetJointFromName('U').Rotate(rotateValue);
-        GetJointFromName('B').Rotate(-rotateValue);
+        RotateExceptionCatcher(() => GetJointFromName('U').Rotate(rotateValue), exceptions);
+        RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
+        //GetJointFromName('U').Rotate(rotateValue);
+        //GetJointFromName('B').Rotate(-rotateValue);
+
+        RotateExceptionCatcher(() => JointsParallelismLimitCheck(), exceptions);
+        if (exceptions.Count > 0)
+        {
+            foreach (var item in exceptions)
+            {
+                Debug.LogException(item);
+            }
+            ReadCheckPoint();
+        }
     }
 
     
@@ -604,7 +679,11 @@ public class IKManager3D2 : MonoBehaviour
         throw new UnityException($"There isn't any joint called {name}");
     }
 
-    public void SearchItemCatchable(bool isKeyRequired = true, [CallerMemberName] string memberName = "")
+    /// <summary>
+    /// If raycast touch any gameobject that have script inherit from Catchable it will be catch.
+    /// </summary>
+    /// <param name="isKeyRequired">if true, you can use space to catch item</param>
+    public void SearchItemCatchable(bool isKeyRequired = true)
     {
         RaycastHit hit;
         Debug.DrawLine(joints[joints.Length - 2].transform.position,
@@ -638,7 +717,6 @@ public class IKManager3D2 : MonoBehaviour
         {
             if (Physics.Raycast(joints[joints.Length - 2].transform.position,dir, out hit, dir.magnitude))
             {
-                //print(memberName);
                 if (hit.collider.TryGetComponent<Catchable>(out Catchable c))
                 {
                     catchItemNow = c;
@@ -660,6 +738,9 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If raycast can't release item at one frame you can use this function.
+    /// </summary>
     public void ForceReleaseItem()
     {
         if (catchItemNow == null) return;
@@ -667,6 +748,58 @@ public class IKManager3D2 : MonoBehaviour
         catchItemNow.Release();
         catchStatusNow = CatchStatus.None;
         IsCatchPressed = false;
+    }
+
+    private void JointsParallelismLimitCheck()
+    {
+        float angle = Vector3.SignedAngle(GetVectorFromJoints('U', 'B'), GetVectorFromJoints('U', 'L'), GetJointFromName('U').transform.right);
+        if(Math.Abs(angle) >= 175)
+        {
+            throw new JointLimitException("Robot Arm reachs the farest point");
+        }
+    }
+
+    private void SaveCheckPoint()
+    {
+        checkPointNow = new CheckPoint(this);
+    }
+
+    private void ReadCheckPoint()
+    {
+        if (checkPointNow == null) return;
+
+        for (int i = 0; i < joints.Length; i++)
+        {
+            joints[i].transform.rotation = checkPointNow.quaternions[i];
+            joints[i].ChangeAngleValue(checkPointNow.angles[i] - joints[i].AngleForCaculate);
+        }
+    }
+
+    private void RotateExceptionCatcher(Action a, List<Exception> exceptions)
+    {
+        try
+        {
+            a.Invoke();
+        }
+        catch(JointLimitException e)
+        {
+            exceptions.Add(e);
+        }
+        catch(UnityException e)
+        {
+            if(e.Message == "Rotate angle is not a number")
+            {
+                exceptions.Add(e);
+            }
+            else
+            {
+                Debug.LogException(e);
+            }
+        }
+        catch(Exception e)
+        {
+            Debug.LogException(e);
+        }
     }
 }
 
@@ -688,8 +821,9 @@ public static class MathfExtension
 
     public static (double,double) AX2BXC(float a, float b, float c)
     {
-        double positive = (-b + Mathf.Sqrt((b * b - 4 * a * c))) / (2 * a);
-        double negative = (-b - Mathf.Sqrt((b * b - 4 * a * c))) / (2 * a);
+        double d = Mathf.Sqrt((b * b - 4 * a * c));
+        double positive = (-b + d) / (2 * a);
+        double negative = (-b - d) / (2 * a);
 
         return (positive, negative);
     }

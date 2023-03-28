@@ -76,6 +76,10 @@ public class StepManager : MonoBehaviour
         {
             ChangeStepOrder(1);
         }
+        else if(Input.GetKeyDown(KeyCode.P))
+        {
+            ResetRobotArm();
+        }
     }
 
     public void ResetCatchableItemOrigin()
