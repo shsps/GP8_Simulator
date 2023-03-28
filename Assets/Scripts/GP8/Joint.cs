@@ -30,14 +30,24 @@ public class Joint : MonoBehaviour
     private float RotateAngleThreshold = 0.5f;
     private bool isRotating = false;
     private Vector3 startAngle;
-    public float angleNow { get; private set; } = 0f;
-    private Vector3 rotatingAxis = Vector3.zero;
-    /*protected enum RotateDirection : short
+
+    public float JointAngle
     {
-        Clockwise = 1,
-        Counterclockwise = -1
+        get
+        {
+            return _jointAngle;
+        }
     }
-    RotateDirection rotateDirection = RotateDirection.Clockwise;*/
+    [SerializeField] private float _jointAngle;
+    public float AngleForCaculate
+    {
+        get
+        {
+            return _angleForCaculate;
+        }
+    }
+    [SerializeField] private float _angleForCaculate;
+    private Vector3 rotatingAxis = Vector3.zero;
     private Vector3 preTargetPosition = Vector3.zero;
     private Quaternion preRotation;
     private Quaternion oriRotation;
@@ -45,10 +55,24 @@ public class Joint : MonoBehaviour
     private void OnEnable()
     {
         oriRotation = this.transform.localRotation;
+
+        switch(rotateAxis)
+        {
+            case RotateAxis.X:
+                _jointAngle = this.transform.localRotation.eulerAngles.x;
+                break;
+            case RotateAxis.Y:
+                _jointAngle = this.transform.localRotation.eulerAngles.y;
+                break;
+            case RotateAxis.Z:
+                _jointAngle = this.transform.localRotation.eulerAngles.z;
+                break;
+        }
+
         if(m_child != null)
         {
             RotateRadius = GetDistanceToChild();
-            MoveAreaPrefab = Resources.Load<GameObject>("Prefabs/MoveArea");
+            /*MoveAreaPrefab = Resources.Load<GameObject>("Prefabs/MoveArea");
             if(RotateRadius > 0)
             {
                 MoveArea = Instantiate(MoveAreaPrefab);
@@ -56,14 +80,14 @@ public class Joint : MonoBehaviour
                 MoveArea.transform.localScale = Vector3.one * RotateRadius * 2;
                 MoveArea.transform.parent = this.transform;
                 MoveArea.transform.SetSiblingIndex(0);
-            }
+            }*/
             startAngle = this.transform.localEulerAngles;
         }
     }
 
     public void Init()
     {
-        angleNow = 0;
+        _angleForCaculate = 0;
     }
 
     /// <summary>
@@ -114,15 +138,16 @@ public class Joint : MonoBehaviour
 
     public void Rotate(float angle)
     {
-        //print(angle);
-        //print($"{this.name} rotate : {angle}");
+        if(float.IsNaN(angle))
+        {
+            throw new UnityException("Rotate angle is not a number");
+        }
+
         CheckIsLimit(angle);
         preRotation = this.transform.rotation;
         switch(rotateAxis)
         {
             case RotateAxis.X:
-                //float _angleNow = Vector3.SignedAngle(this.transform.up, m_child.transform.position - this.transform.position, this.transform.right);
-                //this.transform.rotation = Quaternion.AngleAxis(_angleNow + angle, this.transform.right) * preRotation;
                 this.transform.Rotate(new Vector3(angle, 0, 0));
                 break;
             case RotateAxis.Y:
@@ -132,7 +157,8 @@ public class Joint : MonoBehaviour
                 this.transform.Rotate(new Vector3(0, 0, angle));
                 break;
         }
-        angleNow += angle;
+        _angleForCaculate += angle;
+        _jointAngle += angle;
     }
 
     public void Rotate(Vector3 angle)
@@ -193,8 +219,8 @@ public class Joint : MonoBehaviour
                 float angle = Vector3.SignedAngle(vectorToChild, vectorToTarget, rotatingAxis);
                 if (Mathf.Abs(angle) > RotateAngleThreshold)
                 {
-                    angleNow += Time.deltaTime;
-                    this.transform.rotation = Quaternion.AngleAxis(angleNow, rotatingAxis) * preRotation;
+                    _angleForCaculate += Time.deltaTime;
+                    this.transform.rotation = Quaternion.AngleAxis(_angleForCaculate, rotatingAxis) * preRotation;
                 }
                 else if (Mathf.Abs(angle) <= RotateAngleThreshold)
                 {
@@ -204,26 +230,32 @@ public class Joint : MonoBehaviour
         }
     }
 
-    private void CrossInit(Transform Target)
+    private void CrossInit(Transform Target)// use at MoveArea Rotate
     {
         Vector3 vectorToChild = m_child.transform.position - this.transform.position;
         Vector3 vectorToTarget = Target.position - this.transform.position;
         preTargetPosition = Target.position;
         preRotation = this.transform.rotation;
         rotatingAxis = Vector3.Cross(vectorToChild, vectorToTarget).normalized;
-        angleNow = 0;
+        _angleForCaculate = 0;
         isRotating = true;
     }
 
     public void CheckIsLimit(float angle)
     {
-        if(angle > 0 && (Mathf.Abs(PositiveRotateLimit - angleNow) < 0.1))
+        if(angle > 0 && (Mathf.Abs(PositiveRotateLimit - _jointAngle) < 0.1))//reach the positive angle limit
         {
-            throw new UnityException($"{this.name}'s positive angle has reached limit");
+            throw new JointLimitException($"{this.name} reach the positive angle limit");
         }
-        else if(angle < 0 && (Mathf.Abs(NegativeRotateLimit - angleNow) < 0.1))
+        else if(angle < 0 && (Mathf.Abs(NegativeRotateLimit - _jointAngle) < 0.1))
         {
-            throw new UnityException($"{this.name}'s negative angle has reached limit");
+            throw new JointLimitException($"{this.name} reach the negative angle limit");
         }
+    }
+
+    public void ChangeAngleValue(float value)
+    {
+        _angleForCaculate += value;
+        _jointAngle += value;
     }
 }
