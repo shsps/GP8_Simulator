@@ -160,6 +160,7 @@ public class StepManager : MonoBehaviour
     {
         InitCatchableItem();
         MoveToOrigin();
+        step = 0;
     }
 
     public void MoveDirectly(changeStepDirection stepDirection)

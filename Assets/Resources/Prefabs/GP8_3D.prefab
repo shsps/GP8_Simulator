@@ -294,6 +294,8 @@ MonoBehaviour:
   PositiveRotateLimit: 360
   NegativeRotateLimit: -360
   m_child: {fileID: 2524747779300625330}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &5709866297976065229
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -361,6 +363,8 @@ MonoBehaviour:
   PositiveRotateLimit: 135
   NegativeRotateLimit: -135
   m_child: {fileID: 1763445399529143223}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &8910552327721991186
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -506,9 +510,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateAxis: 1
   RotateSpeed: 10
-  PositiveRotateLimit: 190
+  PositiveRotateLimit: 170
   NegativeRotateLimit: -70
   m_child: {fileID: 4003205854554796683}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &6194850816916386978
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -576,6 +582,8 @@ MonoBehaviour:
   PositiveRotateLimit: 145
   NegativeRotateLimit: -65
   m_child: {fileID: 1732081592114360126}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &1156383716312682480
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -724,6 +732,8 @@ MonoBehaviour:
   PositiveRotateLimit: 190
   NegativeRotateLimit: -190
   m_child: {fileID: 1913146626772156818}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &8668922995885867518
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -902,6 +912,8 @@ MonoBehaviour:
   PositiveRotateLimit: 0
   NegativeRotateLimit: 0
   m_child: {fileID: 0}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &7737645931554702376
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1046,6 +1058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7420c29612ede104c974d416b75917ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useKeyboard: 0
   ChainLength: 2
   Target: {fileID: 0}
   Pole: {fileID: 0}
@@ -1054,11 +1067,13 @@ MonoBehaviour:
   SnapBackStrength: 1
   mode: 3
   joints: []
-  xjoints: []
-  yjoints: []
-  zjoints: []
-  BonesLength: []
   Bones: []
+  MoveToolAngleX: 0
+  MoveToolAngleY: 0
+  MoveToolAngleZ: 0
+  IsCatchPressed: 0
+  catchStatusNow: 0
+  IsCatching: 0
 --- !u!114 &7860216494758435583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1073,9 +1088,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateAxis: 2
   RotateSpeed: 70
-  PositiveRotateLimit: 170
-  NegativeRotateLimit: -170
+  PositiveRotateLimit: 60
+  NegativeRotateLimit: -60
   m_child: {fileID: 6812843911882350112}
+  _jointAngle: 0
+  _angleForCaculate: 0
 --- !u!54 &3251692706970622186
 Rigidbody:
   m_ObjectHideFlags: 0
