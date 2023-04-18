@@ -102,7 +102,7 @@ namespace QRTracking
                     var action = pendingActions.Dequeue();
                     if (action.type == ActionData.Type.Added)
                     {
-                        GameObject qrCodeObject = Instantiate(qrCodePrefab, new Vector3(0, 0, 0), /*Quaternion.Euler(270,0,0)*/Quaternion.identity);
+                        GameObject qrCodeObject = Instantiate(qrCodePrefab, new Vector3(0, 0, 0), Quaternion.identity);
                         qrCodeObject.GetComponent<SpatialGraphNodeTracker>().Id = action.qrCode.SpatialGraphNodeId;
                         qrCodeObject.GetComponent<QRCode>().qrCode = action.qrCode;
                         qrCodesObjectsList.Add(action.qrCode.Id, qrCodeObject);
@@ -111,7 +111,7 @@ namespace QRTracking
                     {
                         if (!qrCodesObjectsList.ContainsKey(action.qrCode.Id))
                         {
-                            GameObject qrCodeObject = Instantiate(qrCodePrefab, new Vector3(0, 0, 0), /*Quaternion.Euler(270, 0, 0)*/Quaternion.identity);//更新轉向
+                            GameObject qrCodeObject = Instantiate(qrCodePrefab, new Vector3(0, 0, 0), Quaternion.identity);
                             //rm.PrintSomething(qrCodeObject.transform.rotation.x.ToString());
                             qrCodeObject.GetComponent<SpatialGraphNodeTracker>().Id = action.qrCode.SpatialGraphNodeId;
                             qrCodeObject.GetComponent<QRCode>().qrCode = action.qrCode;

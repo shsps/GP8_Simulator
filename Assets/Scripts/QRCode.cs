@@ -113,17 +113,15 @@ namespace QRTracking
                 PhysicalSize = qrCode.PhysicalSideLength;
                 Debug.Log("Id= " + qrCode.Id + "NodeId= " + qrCode.SpatialGraphNodeId + " PhysicalSize = " + PhysicalSize + " TimeStamp = " + qrCode.SystemRelativeLastDetectedTime.Ticks + " Time = " + qrCode.LastDetectedTime.ToString("MM/dd/yyyy HH:mm:ss.fff"));
 
-                
                 qrCodeCube.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);
                 qrCodeCube.transform.localScale = new Vector3(PhysicalSize, PhysicalSize, 0.005f);
                 lastTimeStamp = qrCode.SystemRelativeLastDetectedTime.Ticks;
                 QRInfo.transform.localScale = new Vector3(PhysicalSize/0.2f, PhysicalSize / 0.2f, PhysicalSize / 0.2f);
                 ///Above is fine
 
-
                 if (QRText.text == "50872"/*||test*/)
                 {
-                    //DontActiveTheArm++;
+                    //DontActiveTheArm++;////////////
                     Base.SetActive(true);
                     Default.SetActive(true);
                     Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置OK
@@ -148,17 +146,16 @@ namespace QRTracking
                 a = 0;
             }
 
-
             Base.transform.rotation = Quaternion.Euler(0, 0, 0);//OK
-            Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);
+            Arm.transform.localPosition = new Vector3(0, 0.00212f, 0);//OK
 
-            if ((a<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
+            if ((a<10)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
                 a++;
             }
 
-            if(a==4)
+            if(a==10)
             {
                 StepManager.instance.ResetCatchableItemOrigin();//紀錄初始點
                 a++;
