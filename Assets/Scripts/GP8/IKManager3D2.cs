@@ -369,16 +369,13 @@ public class IKManager3D2 : MonoBehaviour
         if(Input.GetKey(KeyCode.E))
         {
             MoveToolZ(Time.deltaTime * 0.5f);
+            //MoveToolZ(0.02f);
         }
         else if(Input.GetKey(KeyCode.D))
         {
             MoveToolZ(-Time.deltaTime * 0.5f);
+            //MoveToolZ(-0.02f);
         }
-
-        /*if(Input.GetKeyDown(KeyCode.V))
-        {
-            init_MoveTool();
-        }*/
 
         SearchItemCatchable();
     }
@@ -409,8 +406,6 @@ public class IKManager3D2 : MonoBehaviour
         float _LRotateAngle = angle * GetJointFromName('L').RotateSpeed;
         RotateExceptionCatcher(() => GetJointFromName('L').Rotate(_LRotateAngle), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-_LRotateAngle), exceptions);
-        //GetJointFromName('L').Rotate(_LRotateAngle);
-        //GetJointFromName('B').Rotate(-_LRotateAngle);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
 
@@ -423,7 +418,7 @@ public class IKManager3D2 : MonoBehaviour
 
         Vector3 vectorBE = GetVectorFromJoints('B', 'E');
         float lengthBE = vectorBE.magnitude;
-        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, -GetJointFromName('B').transform.right);
 
         float paramentA = deltaVerticalDistance + lengthUE * Mathf.Cos(thetaPUE * Deg2Rad) - lengthBE * Mathf.Cos(thetaPBE * Deg2Rad) + lengthUE - lengthBE * Mathf.Cos((thetaPBE - thetaPUE) * Deg2Rad);
         float paramentB = -2 * (lengthBE * Mathf.Sin((thetaPBE - thetaPUE) * Deg2Rad));
@@ -438,8 +433,6 @@ public class IKManager3D2 : MonoBehaviour
 
         RotateExceptionCatcher(() => GetJointFromName('U').Rotate(rotateValue), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
-        //GetJointFromName('U').Rotate(rotateValue);
-        //GetJointFromName('B').Rotate(-rotateValue);
 
         //-----------------------Rectification X-Axis error-----------------------------------------------------
         Vector3 v3 = GetJointFromName('E').transform.position;
@@ -457,8 +450,6 @@ public class IKManager3D2 : MonoBehaviour
             float roateAngleS = Mathf.Asin(distance / radius + Mathf.Sin(angleNow * Deg2Rad)) * Rad2Deg;
             RotateExceptionCatcher(() => GetJointFromName('S').Rotate(roateAngleS - angleNow), exceptions);
             RotateExceptionCatcher(() => GetJointFromName('T').Rotate(roateAngleS - angleNow), exceptions);
-            //GetJointFromName('S').Rotate(roateAngleS - angleNow);
-            //GetJointFromName('T').Rotate(roateAngleS - angleNow);
         }
 
         RotateExceptionCatcher(() => JointsParallelismLimitCheck(), exceptions);
@@ -483,9 +474,8 @@ public class IKManager3D2 : MonoBehaviour
         float _URotateAngle = angle * GetJointFromName('U').RotateSpeed;
         RotateExceptionCatcher(() => GetJointFromName('U').Rotate(_URotateAngle), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-_URotateAngle), exceptions);
-        //GetJointFromName('U').Rotate(_URotateAngle);
-        //GetJointFromName('B').Rotate(-_URotateAngle);
 
+        //-----------------------Rectification Z-Axis error-----------------------------------------------------
         Vector3 v2 = GetJointFromName('E').transform.position;
         Plane plane = new Plane(Vector3.up, Vector3.zero);
         Vector3 projectV1 = plane.ClosestPointOnPlane(v1);
@@ -500,15 +490,13 @@ public class IKManager3D2 : MonoBehaviour
         Vector3 vectorBE = GetVectorFromJoints('B', 'E');
         float lengthBE = vectorBE.magnitude;
         //preBE
-        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, -GetJointFromName('B').transform.right);
 
         float paramentA = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) - lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
         float paramentB = (-2 * (lengthLE - lengthBE * Mathf.Cos((thetaPBE - thetaPLE) * Deg2Rad)));
         float paramentC = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) + lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
 
-        //print($"{paramentA}, {paramentB}, {paramentC}");
         (double, double) result = MathfExtension.AX2BXC(paramentA, paramentB, paramentC);
-        //print(result);
 
         double theta1 = System.Math.Atan(result.Item1) * Rad2Deg * 2;
         double theta2 = System.Math.Atan(result.Item2) * Rad2Deg * 2;
@@ -520,8 +508,8 @@ public class IKManager3D2 : MonoBehaviour
         float rotateValue = thetaNLE - thetaPLE;
         RotateExceptionCatcher(() => GetJointFromName('L').Rotate(rotateValue), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
-        //GetJointFromName('L').Rotate(rotateValue);
-        //GetJointFromName('B').Rotate(-rotateValue);
+
+        float t = Vector3.Distance(v2, GetJointFromName('E').transform.position);
 
         RotateExceptionCatcher(() => JointsParallelismLimitCheck(), exceptions);
         if (exceptions.Count > 0)
@@ -536,6 +524,8 @@ public class IKManager3D2 : MonoBehaviour
 
     public void MoveToolX(float angle)
     {
+        
+        Vector3 tmp1 = GetJointFromName('E').transform.position;
         List<Exception> exceptions = new List<Exception>();
         SaveCheckPoint();
 
@@ -549,8 +539,6 @@ public class IKManager3D2 : MonoBehaviour
         float preAngleT = GetJointFromName('T').AngleForCaculate;
         RotateExceptionCatcher(() => GetJointFromName('S').Rotate(rotateAngleS), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('T').Rotate(rotateAngleS), exceptions);
-        //GetJointFromName('S').Rotate(rotateAngleS);
-        //GetJointFromName('T').Rotate(rotateAngleS);
         float afterAngleT = GetJointFromName('T').AngleForCaculate;
 
         float deltaHorizontalDistance = radiusNow * (Mathf.Cos(preAngleT * Deg2Rad) / Mathf.Cos((afterAngleT) * Deg2Rad) - 1);
@@ -566,7 +554,7 @@ public class IKManager3D2 : MonoBehaviour
         Vector3 vectorBE = GetVectorFromJoints('B', 'E');
         float lengthBE = vectorBE.magnitude;
         //preBE
-        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+        float thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, -GetJointFromName('B').transform.right);
 
         float paramentA = (deltaHorizontalDistance + lengthLE * Mathf.Sin(thetaPLE * Deg2Rad) - lengthBE * Mathf.Sin(thetaPBE * Deg2Rad) - lengthBE * Mathf.Sin((thetaPBE - thetaPLE) * Deg2Rad));
         float paramentB = (-2 * (lengthLE - lengthBE * Mathf.Cos((thetaPBE - thetaPLE) * Deg2Rad)));
@@ -584,8 +572,6 @@ public class IKManager3D2 : MonoBehaviour
         float rotateValue = thetaNLE - thetaPLE;
         RotateExceptionCatcher(() => GetJointFromName('L').Rotate(rotateValue), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
-        //GetJointFromName('L').Rotate(rotateValue);
-        //GetJointFromName('B').Rotate(-rotateValue);
 
         Vector3 v2 = GetJointFromName('E').transform.position;
 
@@ -601,7 +587,7 @@ public class IKManager3D2 : MonoBehaviour
 
         vectorBE = GetVectorFromJoints('B', 'E');
         lengthBE = vectorBE.magnitude;
-        thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, GetJointFromName('B').transform.right);
+        thetaPBE = Vector3.SignedAngle(Vector3.up, vectorBE, -GetJointFromName('B').transform.right);
 
         paramentA = deltaVerticalDistance + lengthUE * Mathf.Cos(thetaPUE * Deg2Rad) - lengthBE * Mathf.Cos(thetaPBE * Deg2Rad) + lengthUE - lengthBE * Mathf.Cos((thetaPBE - thetaPUE) * Deg2Rad);
         paramentB = -2 * (lengthBE * Mathf.Sin((thetaPBE - thetaPUE) * Deg2Rad));
@@ -616,8 +602,6 @@ public class IKManager3D2 : MonoBehaviour
 
         RotateExceptionCatcher(() => GetJointFromName('U').Rotate(rotateValue), exceptions);
         RotateExceptionCatcher(() => GetJointFromName('B').Rotate(-rotateValue), exceptions);
-        //GetJointFromName('U').Rotate(rotateValue);
-        //GetJointFromName('B').Rotate(-rotateValue);
 
         RotateExceptionCatcher(() => JointsParallelismLimitCheck(), exceptions);
         if (exceptions.Count > 0)
@@ -754,9 +738,14 @@ public class IKManager3D2 : MonoBehaviour
     private void JointsParallelismLimitCheck()
     {
         float angle = Vector3.SignedAngle(GetVectorFromJoints('U', 'B'), GetVectorFromJoints('U', 'L'), GetJointFromName('U').transform.right);
+        //print($"parallel angle : {angle}");
         if(Math.Abs(angle) >= 175)
         {
             throw new JointLimitException("Robot Arm reachs the farest point");
+        }
+        else if(Math.Abs(angle) <= 24)
+        {
+            throw new JointLimitException("If you keep moving joints will collide");
         }
     }
 

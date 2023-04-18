@@ -25,7 +25,7 @@ public class IKManager3D : MonoBehaviour
     public float SnapBackStrength = 1f;
 
     protected Joint root;
-    protected float[] BonesLength;
+    [SerializeField] protected float[] BonesLength;
     protected float CompleteLength;
     public Transform[] Bones;
     protected Vector3[] Positions;
