@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Microsoft.MixedReality.QR;
+
+using System;
 namespace QRTracking
 {
     public class QRCodesVisualizer : MonoBehaviour
@@ -102,10 +104,16 @@ namespace QRTracking
                     var action = pendingActions.Dequeue();
                     if (action.type == ActionData.Type.Added)
                     {
-                        GameObject qrCodeObject = Instantiate(qrCodePrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                        qrCodeObject.GetComponent<SpatialGraphNodeTracker>().Id = action.qrCode.SpatialGraphNodeId;
-                        qrCodeObject.GetComponent<QRCode>().qrCode = action.qrCode;
-                        qrCodesObjectsList.Add(action.qrCode.Id, qrCodeObject);
+                        int secondsOfStamp = (action.qrCode.LastDetectedTime.Hour * 60 * 60) + (action.qrCode.LastDetectedTime.Minute * 60) + (action.qrCode.LastDetectedTime.Second);
+                        int secondsOfNow = (DateTime.Now.Hour * 60 * 60) + (DateTime.Now.Minute * 60) + (DateTime.Now.Second);
+                        int timePassed = secondsOfNow - secondsOfStamp;
+                        if (timePassed<=10)
+                        {
+                            GameObject qrCodeObject = Instantiate(qrCodePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                            qrCodeObject.GetComponent<SpatialGraphNodeTracker>().Id = action.qrCode.SpatialGraphNodeId;
+                            qrCodeObject.GetComponent<QRCode>().qrCode = action.qrCode;
+                            qrCodesObjectsList.Add(action.qrCode.Id, qrCodeObject);
+                        }
                     }
                     else if (action.type == ActionData.Type.Updated)
                     {

@@ -4,6 +4,7 @@ using UnityEngine;
 using Microsoft.MixedReality.Toolkit.UI;
 using System.Text;
 using Microsoft.MixedReality.Toolkit.Input;
+using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class ButtonManager : MonoBehaviour
     [SerializeField] private Color c = Color.green;
     [SerializeField] private IKManager3D2 ik;
     [SerializeField] private IKManager3D2.OperationMode currentMode;
+    //public static Text testText;
     //public Microsoft.MixedReality.QR.QRCode qrCode;
 
     // Start is called before the first frame update
@@ -425,4 +427,9 @@ public class ButtonManager : MonoBehaviour
             grabBtn[j].GetComponent<MeshRenderer>().materials[0].color = grabBtnMaterials[j];
         }
     }
+
+    /*public static void TextShow()
+    {
+        testText.text = "A";
+    }*/
 }
