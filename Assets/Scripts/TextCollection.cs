@@ -9,8 +9,8 @@ public class TextCollection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Btext = GameObject.Find("TestBoard").GetComponentInChildren<Text>();
-        Btext.text = "Ori";
+        /*Btext = GameObject.Find("TestBoard").GetComponentInChildren<Text>();
+        Btext.text = "Ori";*/
     }
 
     // Update is called once per frame
