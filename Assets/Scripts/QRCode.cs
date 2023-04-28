@@ -18,8 +18,6 @@ namespace QRTracking
         public int DontActiveTheArm = 0;
         public string CompareStr = "Arm";
         public Text TestText;
-        //public GameObject DefaultThings;//桌子，板子，要夾的物品
-        //public GameObject qrPosition;//自定義父物件
 
         public TextMesh ShowError;
         public float PhysicalSize { get; private set; }
@@ -36,14 +34,12 @@ namespace QRTracking
         private bool launch = false;
         private System.Uri uriResult;
         private long lastTimeStamp = 0;
-        //Vector3 v = new Vector3(270, 0, 0);
         public static int locateCounter = 0;
         int firstTime = 0;
         public static bool test = false;
         int timePassed;
         public GameObject QRCodeGameObject;
         int secondsOfStamp = 0;
-        //public Text debug;
 
         // Use this for initialization
         void Start()
@@ -64,9 +60,7 @@ namespace QRTracking
             Base = gameObject.transform.Find("GP8_3D").gameObject;
             Arm = Base.transform.Find("JointS").gameObject;//prefab內物件
             Default = Base.transform.Find("DefaultThings").gameObject;
-            //qrPosition = this.gameObject;//自定義父物件
-            //debug = gameObject.transform.Find("Debug").gameObject.GetComponent<Text>();//Debug
-            //JointRotation = gameObject.transform.Find("JointRotation").gameObject;
+
             QRInfo = gameObject.transform.Find("QRInfo").gameObject;
             QRID = QRInfo.transform.Find("QRID").gameObject.GetComponent<TextMesh>();
             QRNodeID = QRInfo.transform.Find("QRNodeID").gameObject.GetComponent<TextMesh>();
@@ -76,7 +70,7 @@ namespace QRTracking
             QRSize = QRInfo.transform.Find("QRSize").gameObject.GetComponent<TextMesh>();
 
             ShowError = QRInfo.transform.Find("ShowError").gameObject.GetComponent<TextMesh>();
-            QRCodeGameObject = this.gameObject;/*QRInfo.transform.parent.gameObject;*/////
+            QRCodeGameObject = this.gameObject;
 
             StepManagerController = gameObject.transform.Find("StepManager").gameObject;
 
@@ -100,7 +94,6 @@ namespace QRTracking
             Arm.SetActive(false);
             Default.SetActive(false);
 
-            //firstTime = 0;
         }
 
         void UpdatePropertiesDisplay()
@@ -108,10 +101,7 @@ namespace QRTracking
             
             int secondsOfNow = (DateTime.Now.Hour * 60 * 60) + (DateTime.Now.Minute * 60) + (DateTime.Now.Second);
 
-            //TextCollection.BackgroundText("Stamp"+ qrCode.LastDetectedTime.ToString("MM/dd/yyyy HH:mm:ss.fff")+"\n"+"Now"+DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.fff") + "\n"+timePassed.ToString());
-            //TextCollection.BackgroundText(this.name+" "+this.transform.childCount+" "+this.transform.parent);
-            //System.Diagnostics.Debug.WriteLine(this.name + " "+timePassed+" " + QRCodeGameObject.name/*this.transform.parent/*No parent*/);
-            if (qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks/*&&(secondsOfNow - secondsOfStamp)<1*/)
+            if (qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)
             {
                 secondsOfStamp = (qrCode.LastDetectedTime.Hour * 60 * 60) + (qrCode.LastDetectedTime.Minute * 60) + (qrCode.LastDetectedTime.Second);
 
@@ -131,6 +121,10 @@ namespace QRTracking
 
                 if (QRText.text == CompareStr)
                 {
+                    if(firstTime!=0&&(secondsOfNow-secondsOfStamp)<1)
+                    {
+                        firstTime = 0;
+                    }
                     Base.SetActive(true);
                     Default.SetActive(true);
                     Base.transform.localPosition = new Vector3(PhysicalSize / 2.0f, PhysicalSize / 2.0f, 0.0f);//機械手臂基座位置OK
@@ -160,15 +154,20 @@ namespace QRTracking
 
             if(timePassed>=4)
             {
-                //these
+                
                 if(firstTime==0)
                 {
-                    Circle.transform.rotation = Quaternion.Euler(0, 0, 0);
-                    Cube.transform.rotation = Quaternion.Euler(0, 0, 0);
-                    Circle.transform.position = new Vector3(Default.transform.position.x+ -0.0008480051f, Default.transform.position.y+ 0.004675776f, Default.transform.position.z+ 0.004474159f);
-                    Cube.transform.position = new Vector3(Default.transform.position.x + -0.000270001f, Default.transform.position.y + 0.004675752f, Default.transform.position.z + 0.004481005f);
+                    //lastSetTime = secondsOfStamp;
+
+                    Circle.transform.rotation = Quaternion.Euler(90, 0, 0);
+                    Cube.transform.rotation = Quaternion.Euler(90, 0, 0);
+                    Circle.transform.localPosition = new Vector3(-0.0008480051f,0.004675776f,0.004474159f);
+                    Cube.transform.localPosition = new Vector3(-0.000270001f,0.004675752f, 0.004481005f);
                 
                     StepManager.instance.ResetCatchableItemOrigin();//紀錄初始點
+                    //StepManager.instance.MoveNextSlowly();//不會作用
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                    //StepManager.instance.ChangeStepOrder(-1);
                     firstTime++;
                 }
             }

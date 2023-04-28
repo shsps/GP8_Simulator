@@ -9,11 +9,8 @@ using UnityEngine.UI;
 public class ButtonManager : MonoBehaviour
 {
     public PressableButton[] buttonsHoloLens2 = new PressableButton[16];//教導盒
-    //public GameObject[] buttons;
     public GameObject teachingBoxButtonGroup;
     public List<GameObject> buttons = new List<GameObject>();
-    //public string[] buttonsThatDontNeedToUse = { "8+","8-","E+","E-","L.移位","R.X+", "R.X-", "R.Y+", "R.Y-", "R.Z+", "R.Z-","主選單","停止鈕","後背版1", "後背版2","急停鈕","換頁","方向鍵","機器人切換","機體" ,"版面","用途","直接切換","移位","簡易選單","變更","輔助","連鎖","運動模式","選擇","鑰匙","鑰匙孔","開始鈕"};
-    //public PressableButton[] buttons = new PressableButton[68];
     public List<GameObject> tutorialBtn = new List<GameObject>();
     public List<Color> tutorialBtnMaterials = new List<Color>();
     public List<GameObject> grabBtn = new List<GameObject>();
@@ -27,14 +24,10 @@ public class ButtonManager : MonoBehaviour
     public GameObject teachingText;
     public GameObject armForTest,steps;
     public bool isPlaying = false;
-    RemoteAction ra = new RemoteAction();
     [SerializeField] private Material[] ms;
     [SerializeField] private Color o;
     [SerializeField] private Color c = Color.green;
     [SerializeField] private IKManager3D2 ik;
-    [SerializeField] private IKManager3D2.OperationMode currentMode;
-    //public static Text testText;
-    //public Microsoft.MixedReality.QR.QRCode qrCode;
 
     // Start is called before the first frame update
     void Start()
@@ -53,10 +46,6 @@ public class ButtonManager : MonoBehaviour
                 grabBtn.Add(btn);
                 grabBtnMaterials.Add(btn.GetComponent<MeshRenderer>().materials[0].color);
             }
-        }
-        foreach(GameObject btg in buttons)
-        {
-
         }
         foreach (PressableButton b in buttonsHoloLens2)
         {
@@ -95,12 +84,6 @@ public class ButtonManager : MonoBehaviour
             {
                 if (b.name == "PreviousActionType")
                 {
-                    /*if (ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
-                    {
-                        print("上一套放開");
-                        ik.SearchItemCatchable();
-                        StepManager.instance.ResetCatchableItemOrigin();
-                    }*/
                     if (y == 0)
                     {
                         print("reset");
@@ -115,7 +98,7 @@ public class ButtonManager : MonoBehaviour
                         GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
                         ButtonToPress();
                         GameObject.Find("StepManager").GetComponent<StepManager>().step = 1;
-                        for(int i =0; i< /*GameObject.Find("StepManager").GetComponent<StepManager>().step-*/6; i++)
+                        for(int i =0; i< 6; i++)
                         {
                             try
                             {
@@ -127,30 +110,14 @@ public class ButtonManager : MonoBehaviour
                             }
                         }
                     }
-
-                    /*try 
-                    {*/
-                        StepManager.instance.ChangeStepOrder(-1);
-                    /*}
-                    finally
-                    {*/
-                        ButtonToPress();
-                        teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
-                        teachingText.GetComponent<TutorialBoard>().ChangeTitle();
-                        y = 0;
-                    //}
-                    
-                    //StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
-                    //StepManager.instance.MoveNextSlowly();///////////////
+                    StepManager.instance.ChangeStepOrder(-1);
+                    ButtonToPress();
+                    teachingText.GetComponent<TutorialBoard>().ChangeTextArrayOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                    teachingText.GetComponent<TutorialBoard>().ChangeTitle();
+                    y = 0;
                 }
                 if (b.name == "NextActionType")
                 {
-                    /*if(ik.catchStatusNow == IKManager3D2.CatchStatus.Catch)
-                    {
-                        print("下一套放開");
-                        ik.SearchItemCatchable();
-                        StepManager.instance.ResetCatchableItemOrigin();
-                    }*/
                     actionType++;
                     ResetBtns();
                     if (actionType > 2/*動作組數*/) actionType = 2;
@@ -189,7 +156,6 @@ public class ButtonManager : MonoBehaviour
                 {
                     teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Next);
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.positive);
-                    //ButtonPressed(buttons[0].GetComponent<MeshRenderer>());
                     ButtonToPress();
                 }
             });
@@ -200,15 +166,8 @@ public class ButtonManager : MonoBehaviour
                 armForTest.transform.GetChild(1).name = "JointS";
                 steps.SetActive(true);
                 steps.name = "StepManager";
-                //QRTracking.QRCode.test = true;
                 circle.SetActive(true);
                 cube.SetActive(true);
-            });
-
-            test.ButtonReleased.AddListener(() =>
-            {
-
-                //QRTracking.QRCode.test = false;
             });
         }
 
@@ -222,7 +181,6 @@ public class ButtonManager : MonoBehaviour
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();
         }
-        //print(ik.catchStatusNow);
         if(actionType!=2)
         {
             StepManager.instance.MoveNextSlowly();//根據設定秒數，在時間內移至指定位置
@@ -258,24 +216,6 @@ public class ButtonManager : MonoBehaviour
                     case "L.Z-":
                         ik.MoveToolZ(-0.02f);//back
                         break;
-                    /*case "R.X+":
-
-                        break;
-                    case "R.X-":
-                        //ik
-                        break;
-                    case "R.Y+":
-
-                        break;
-                    case "R.Y-":
-
-                        break;
-                    case "R.Z+":
-
-                        break;
-                    case "R.Z-":
-
-                        break;*/
                     case "測試運轉":
                         StepManager.instance.MoveNextSlowly();
                         break;
@@ -403,10 +343,6 @@ public class ButtonManager : MonoBehaviour
                 ResetBtns();
                 ButtonPressed(grabBtn[0].GetComponent<MeshRenderer>());
                 break;
-            /*case 8:
-                ResetBtns();
-                ButtonPressed(grabBtn[2].GetComponent<MeshRenderer>());
-                break;*/
         }
 
     }
@@ -427,9 +363,4 @@ public class ButtonManager : MonoBehaviour
             grabBtn[j].GetComponent<MeshRenderer>().materials[0].color = grabBtnMaterials[j];
         }
     }
-
-    /*public static void TextShow()
-    {
-        testText.text = "A";
-    }*/
 }
