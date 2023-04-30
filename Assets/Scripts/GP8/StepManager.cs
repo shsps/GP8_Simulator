@@ -78,8 +78,16 @@ public class StepManager : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.P))
         {
-            ResetRobotArm();
+            ForceResetAll();
         }
+    }
+
+    public void ForceResetAll()
+    {
+        stepInfosNow[0].Ik.ForceReleaseItem();
+        MoveToOrigin();
+        InitCatchableItem();
+        step = 0;
     }
 
     public void ResetCatchableItemOrigin()
@@ -143,10 +151,6 @@ public class StepManager : MonoBehaviour
     {
         foreach (var item in catchableItems)
         {
-            /*if(item.IsCatching)
-            {
-                item.Release();
-            }*/
             item.Init();
         }
     }
@@ -163,6 +167,8 @@ public class StepManager : MonoBehaviour
         step = 0;
     }
 
+    //Bug : If your previous step catch an item that doesn't at the origin position,
+    //      and you move to previous step. This function will move the item to origin position.
     public void MoveDirectly(changeStepDirection stepDirection)
     {
         if (stepInfosNow.Count == 0) throw new UnityException("Didn't set any point");
@@ -174,17 +180,34 @@ public class StepManager : MonoBehaviour
         else if (stepDirection == changeStepDirection.negative)
         {
             step = step == 0 ? stepInfosNow.Count : step - 1;
+            if(step > 0 && step < stepInfosNow.Count)
+            {
+                print("in");
+                if (stepInfosNow[step].CatchStatusNow == IKManager3D2.CatchStatus.Catch &&
+                   stepInfosNow[step - 1].CatchStatusNow == IKManager3D2.CatchStatus.None)
+                {
+                    stepInfosNow[step].Ik.ForceReleaseItem();
+                    InitCatchableItem();
+                }
+            }
         }
 
         if(step == 0)
         {
             ResetRobotArm();
         }
-        else
+        /*else
         {
             MoveToOrigin();
-        }
+        }*/
+
+        MoveToOrigin();
+        #region Detect catchableItem need to be released or not
+
+        #endregion
         //print($"step : {step}");
+
+        #region move from 0 to step
         for (int i = 0; i < step; i++)
         {
             StepInfo preStepInfo = i == 0 ? new StepInfo() : stepInfosNow[i - 1];
@@ -206,6 +229,7 @@ public class StepManager : MonoBehaviour
                 targetStepInfo.Ik.SearchItemCatchable(false);
             }
         }
+        #endregion
         preStep = step;
         
         moveIndex = 0;
