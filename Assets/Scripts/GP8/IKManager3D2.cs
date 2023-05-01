@@ -25,13 +25,12 @@ public class IKManager3D2 : MonoBehaviour
     public float SnapBackStrength = 1f;
     public enum OperationMode
     {
-        //Default,
         Stop,
         SingleJoint,
         FreeMode,
         MoveTool,
     }
-    //Only MoveTool work for now.
+    //Which mode doesn't matter, Only MoveTool work for now.
     public OperationMode mode = OperationMode.SingleJoint;
     private OperationMode preMode;
 
@@ -101,9 +100,6 @@ public class IKManager3D2 : MonoBehaviour
     }
     private void LateUpdate()
     {
-        //RotateAroundAxisTutorial();
-        //ResolveIK();
-
         RobotArmIK();
 
         
@@ -122,6 +118,9 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Save every joint and caculate length from any joint to next
+    /// </summary>
     public void Init()
     {
         root = this.GetComponent<Joint>();
@@ -159,6 +158,9 @@ public class IKManager3D2 : MonoBehaviour
         mode = OperationMode.MoveTool;
     }
 
+    /// <summary>
+    /// Save robot arm origin rotation and position
+    /// </summary>
     public void InitPositionRotation()
     {
         originRotation = new Quaternion[joints.Length];
@@ -210,6 +212,10 @@ public class IKManager3D2 : MonoBehaviour
         Debug.DrawLine(Vector3.zero, p + Vector3.up / 20, Color.red, 3f);
     }
 
+    /// <summary>
+    /// This function can caculate how many angle does every joint neet to rotate for reaching the target.
+    /// But this function can't let joint rotate along every joint's axis, so i don't use this function.
+    /// </summary>
     private void ResolveIK()
     {
         if (Target == null) return;
@@ -311,11 +317,6 @@ public class IKManager3D2 : MonoBehaviour
     {
         switch(mode)
         {
-            case OperationMode.SingleJoint:
-                break;
-            case OperationMode.FreeMode:
-                FreeMode();
-                break;
             case OperationMode.MoveTool:
                 MoveTool();
                 break;
@@ -380,6 +381,9 @@ public class IKManager3D2 : MonoBehaviour
         SearchItemCatchable();
     }
 
+    /// <summary>
+    /// Reset every joint to origin position and rotation
+    /// </summary>
     public void init_MoveTool()
     {
         for (int i = 0; i < joints.Length; i++)
@@ -394,6 +398,10 @@ public class IKManager3D2 : MonoBehaviour
         IsCatchPressed = false;
     }
 
+    /// <summary>
+    /// Move jointE along jointE's local axis_Z
+    /// </summary>
+    /// <param name="angle"></param>
     public void MoveToolZ(float angle)
     {
         List<Exception> exceptions = new List<Exception>();
@@ -463,6 +471,10 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Move jointE along jointE's local axis_Y
+    /// </summary>
+    /// <param name="angle"></param>
     public void MoveToolY(float angle)
     {
         List<Exception> exceptions = new List<Exception>();
@@ -522,6 +534,10 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Move jointE along jointE's local axis_X
+    /// </summary>
+    /// <param name="angle"></param>
     public void MoveToolX(float angle)
     {
         
@@ -612,21 +628,6 @@ public class IKManager3D2 : MonoBehaviour
             }
             ReadCheckPoint();
         }
-    }
-    
-    /// <returns>This Vector3 means how much degrees end joint needs to rotate to Target</returns>
-    private Vector3 CaculateAngleToTarget()
-    {
-        Vector3 endToTarget = Target.position - joints[joints.Length - 1].transform.position;
-
-        float xAngle = 0;
-
-        Plane yPlane = new Plane(this.transform.up, this.transform.position);
-        float yAngle = Vector3.SignedAngle((yPlane.ClosestPointOnPlane(end.transform.position) - yPlane.ClosestPointOnPlane(this.transform.position)),
-                                           (yPlane.ClosestPointOnPlane(Target.transform.position) - yPlane.ClosestPointOnPlane(this.transform.position)), Vector3.up);
-        float zAngle = 0;
-
-        return new Vector3(xAngle, yAngle, zAngle);
     }
 
     private Vector3 GetVectorFromJoints(char from, char to)
@@ -735,6 +736,9 @@ public class IKManager3D2 : MonoBehaviour
         IsCatchPressed = false;
     }
 
+    /// <summary>
+    /// If two vector UB and UL close to parallelism, it will throw exception
+    /// </summary>
     private void JointsParallelismLimitCheck()
     {
         float angle = Vector3.SignedAngle(GetVectorFromJoints('U', 'B'), GetVectorFromJoints('U', 'L'), GetJointFromName('U').transform.right);
@@ -749,6 +753,9 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Save every joint's rotation. You can use check point if MoveTool throw exception.
+    /// </summary>
     private void SaveCheckPoint()
     {
         checkPointNow = new CheckPoint(this);
@@ -765,6 +772,11 @@ public class IKManager3D2 : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Used to rotate joint. If rotate not complete it will add exception to exceptions.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="exceptions"></param>
     private void RotateExceptionCatcher(Action a, List<Exception> exceptions)
     {
         try

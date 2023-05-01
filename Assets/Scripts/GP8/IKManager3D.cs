@@ -5,6 +5,7 @@ using UnityEditor;
 
 /// <summary>
 /// This IK refers to https://www.youtube.com/watch?v=qqOAzn05fvk
+/// But this is not the rotating movement i want
 /// </summary>
 public class IKManager3D : MonoBehaviour
 {
