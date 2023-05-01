@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    public PressableButton[] buttonsHoloLens2 = new PressableButton[16];//教導盒
+    public PressableButton[] buttonsHoloLens2 = new PressableButton[17];//教導盒
     public GameObject teachingBoxButtonGroup;
     public List<GameObject> buttons = new List<GameObject>();
     public List<GameObject> tutorialBtn = new List<GameObject>();
@@ -18,7 +18,7 @@ public class ButtonManager : MonoBehaviour
     public PressableButton[] buttonsOfSteps = new PressableButton[4];
     public int actionType = 0;
     public GameObject circle, cube;
-    int x = 0;
+    int x = 0,showResetFirstBtn = 0;
     [SerializeField] int y = 0;
     public PressableButton test;
     public GameObject teachingText;
@@ -69,6 +69,30 @@ public class ButtonManager : MonoBehaviour
                 {
                     ik.init_MoveTool();
                     //Back to the first position
+                }
+                if(b.name == "急停鈕")
+                {
+                    StepManager.instance.ResetRobotArm();
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                    for(int i=0;i<=10;i++)
+                    {
+                        try
+                        {
+                            teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    ResetBtns();
+                    if (showResetFirstBtn == 0)
+                    {
+                        GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
+                        ButtonToPress();
+                        showResetFirstBtn++;
+                    }
+                    showResetFirstBtn = 0;
                 }
             });
             b.ButtonReleased.AddListener(() =>

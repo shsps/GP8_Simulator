@@ -4087,6 +4087,9 @@ GameObject:
   - component: {fileID: 223974356}
   - component: {fileID: 223974104}
   - component: {fileID: 223973969}
+  - component: {fileID: 223974182}
+  - component: {fileID: 223974181}
+  - component: {fileID: 223974180}
   m_Layer: 0
   m_Name: "\u6025\u505C\u9215"
   m_TagString: Untagged
@@ -4112,6 +4115,71 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &223974180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223974178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c748f3768ab714a8449b60fb9edc5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventsToReceive: 0
+  debounceThreshold: 0.01
+  localForward: {x: -0, y: -0, z: 1}
+  localUp: {x: 0, y: 1, z: 0}
+  localCenter: {x: -0.00000014901161, y: 0.00000014901161, z: 0.0099998675}
+  bounds: {x: 0.020000031, y: 0.02000003}
+  touchableCollider: {fileID: 223974182}
+--- !u!114 &223974181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223974178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63c897c097799da4a900032ad3471c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movingButtonVisuals: {fileID: 223974178}
+  distanceSpaceMode: 0
+  startPushDistance: -0.021510575
+  maxPushDistance: 0.011730075
+  pressDistance: -0.018336043
+  releaseDistanceDelta: 0
+  returnSpeed: 25
+  releaseOnTouchEnd: 1
+  enforceFrontPush: 1
+  TouchBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  TouchEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  ButtonPressed:
+    m_PersistentCalls:
+      m_Calls: []
+  ButtonReleased:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &223974182
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223974178}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.020000031, y: 0.02000003, z: 0.02000004}
+  m_Center: {x: -0.00000014901161, y: 0.00000014901161, z: -0.0000001527369}
 --- !u!1 &223974184
 GameObject:
   m_ObjectHideFlags: 0
@@ -12755,7 +12823,6 @@ MonoBehaviour:
   o: {r: 0, g: 0, b: 0, a: 0}
   c: {r: 0, g: 1, b: 0, a: 1}
   ik: {fileID: 0}
-  currentMode: 3
 --- !u!114 &1090366108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15880,7 +15947,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1525742111
 MonoBehaviour:
   m_ObjectHideFlags: 0
