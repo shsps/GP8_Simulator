@@ -24,13 +24,14 @@ public class Joint : MonoBehaviour
 
     [Tooltip("Child Joint")]
     public Joint m_child;
-    private GameObject MoveAreaPrefab;
-    private GameObject MoveArea;
     public float RotateRadius { get; private set; } = 1f;
     private float RotateAngleThreshold = 0.5f;
     private bool isRotating = false;
     private Vector3 startAngle;
 
+    /// <summary>
+    /// This value start from this joint's world angle when starting
+    /// </summary>
     public float JointAngle
     {
         get
@@ -40,6 +41,10 @@ public class Joint : MonoBehaviour
     }
     [SerializeField] private float _jointAngle;
     private float oriJointAngle;
+
+    /// <summary>
+    /// This value start from 0
+    /// </summary>
     public float AngleForCaculate
     {
         get
@@ -51,11 +56,9 @@ public class Joint : MonoBehaviour
     private Vector3 rotatingAxis = Vector3.zero;
     private Vector3 preTargetPosition = Vector3.zero;
     private Quaternion preRotation;
-    private Quaternion oriRotation;
 
     private void OnEnable()
     {
-        oriRotation = this.transform.localRotation;
 
         switch(rotateAxis)
         {
@@ -74,15 +77,6 @@ public class Joint : MonoBehaviour
         if(m_child != null)
         {
             RotateRadius = GetDistanceToChild();
-            /*MoveAreaPrefab = Resources.Load<GameObject>("Prefabs/MoveArea");
-            if(RotateRadius > 0)
-            {
-                MoveArea = Instantiate(MoveAreaPrefab);
-                MoveArea.transform.position = this.transform.position;
-                MoveArea.transform.localScale = Vector3.one * RotateRadius * 2;
-                MoveArea.transform.parent = this.transform;
-                MoveArea.transform.SetSiblingIndex(0);
-            }*/
             startAngle = this.transform.localEulerAngles;
         }
     }
@@ -164,25 +158,6 @@ public class Joint : MonoBehaviour
         _jointAngle += angle;
     }
 
-    public void Rotate(Vector3 angle)
-    {
-        this.transform.localEulerAngles = startAngle + angle;
-    }
-
-    public void Rotate(Quaternion a, Quaternion b, float t)
-    {
-        transform.rotation = Quaternion.Slerp(a, b, t * Time.deltaTime);
-    }
-
-    public void Rotate(Quaternion a, float angle)
-    {
-        if(angle < 0)
-        {
-            a = Quaternion.Inverse(a);
-            angle *= -1;
-        }
-        transform.rotation = Quaternion.Slerp(this.transform.rotation, a, angle);
-    }
     /// <summary>
     /// If Target is inside MoveArea,
     /// the Vector from this joint to child joint will face to Target

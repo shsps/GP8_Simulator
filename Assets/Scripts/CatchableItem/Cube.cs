@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// If you want to let robot arm catch a GameObject, you can add this script on a GameObject.
+/// If you want to create a catch function personally, you can create a script inherit to Catchable.
+/// </summary>
 public class Cube : Catchable
 {
     //public bool IsCatching { get; set; } = false;
