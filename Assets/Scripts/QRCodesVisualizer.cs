@@ -95,6 +95,7 @@ namespace QRTracking
             }
         }
 
+        //QRcode will Instantiate at here
         private void HandleEvents()
         {
             lock (pendingActions)

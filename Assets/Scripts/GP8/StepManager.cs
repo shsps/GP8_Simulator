@@ -8,7 +8,7 @@ public class StepManager : MonoBehaviour
     private List<List<StepInfo>> stepInfosList = new List<List<StepInfo>>();
     public List<StepInfo> stepInfos = new List<StepInfo>();
     [SerializeField] private List<StepInfo> stepInfosNow = new List<StepInfo>();
-    [SerializeField] public int stepOrder = 0;//private
+    [SerializeField] public int stepOrder = 0;
     public int step = 0;
     [SerializeField] private int preStep = 0;
     public enum changeStepDirection
@@ -82,6 +82,9 @@ public class StepManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Re-setting all catchableItem's origin position and rotation
+    /// </summary>
     public void ResetCatchableItemOrigin()
     {
         foreach (var item in catchableItems)
@@ -90,6 +93,9 @@ public class StepManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If you generate a new StepInfosList you can use this function to reimport StepsInfoList
+    /// </summary>
     public void ReImportStepInfosList()
     {
         stepInfosList.Clear();
@@ -109,6 +115,10 @@ public class StepManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Change step order to next or previous
+    /// </summary>
+    /// <param name="changeOrder">If this value bigger than 0, step order change to next, otherwise previous</param>
     public void ChangeStepOrder(int changeOrder)
     {
         if((stepOrder + changeOrder) < 0 | (stepOrder + changeOrder) >= stepInfosList.Count)
@@ -131,6 +141,10 @@ public class StepManager : MonoBehaviour
         preStep = 0;
     }
 
+    /// <summary>
+    /// Add the step now to stepinfos
+    /// </summary>
+    /// <param name="ik"></param>
     public void AddStep(IKManager3D2 ik)
     {
         StepInfo newInfo = new StepInfo(ik);
@@ -143,10 +157,6 @@ public class StepManager : MonoBehaviour
     {
         foreach (var item in catchableItems)
         {
-            /*if(item.IsCatching)
-            {
-                item.Release();
-            }*/
             item.Init();
         }
     }
@@ -156,13 +166,25 @@ public class StepManager : MonoBehaviour
         stepInfosNow[0].Ik.init_MoveTool();
     }
 
+    /// <summary>
+    /// Force release item on catching, 
+    /// reset it to origin position , reset robot arm position
+    /// and set step to 0
+    /// </summary>
     public void ResetRobotArm()
     {
+        stepInfosNow[0].Ik.ForceReleaseItem();
         InitCatchableItem();
         MoveToOrigin();
         step = 0;
     }
 
+    //Bug : If your previous step catch an item that doesn't at the origin position,
+    //      and you move to previous step. This function will move the item to origin position.
+    /// <summary>
+    /// Move to next or previous step directly
+    /// </summary>
+    /// <param name="stepDirection"></param>
     public void MoveDirectly(changeStepDirection stepDirection)
     {
         if (stepInfosNow.Count == 0) throw new UnityException("Didn't set any point");
@@ -174,17 +196,33 @@ public class StepManager : MonoBehaviour
         else if (stepDirection == changeStepDirection.negative)
         {
             step = step == 0 ? stepInfosNow.Count : step - 1;
+            if(step > 0 && step < stepInfosNow.Count)
+            {
+                if (stepInfosNow[step].CatchStatusNow == IKManager3D2.CatchStatus.Catch &&
+                   stepInfosNow[step - 1].CatchStatusNow == IKManager3D2.CatchStatus.None)
+                {
+                    stepInfosNow[step].Ik.ForceReleaseItem();
+                    InitCatchableItem();
+                }
+            }
         }
 
         if(step == 0)
         {
             ResetRobotArm();
         }
-        else
+        /*else
         {
             MoveToOrigin();
-        }
+        }*/
+
+        MoveToOrigin();
+        #region Detect catchableItem need to be released or not
+
+        #endregion
         //print($"step : {step}");
+
+        #region move from 0 to step
         for (int i = 0; i < step; i++)
         {
             StepInfo preStepInfo = i == 0 ? new StepInfo() : stepInfosNow[i - 1];
@@ -206,12 +244,16 @@ public class StepManager : MonoBehaviour
                 targetStepInfo.Ik.SearchItemCatchable(false);
             }
         }
+        #endregion
         preStep = step;
         
         moveIndex = 0;
         isMovingSlowly = false;
     }
 
+    /// <summary>
+    /// Move to next or previous step solwly according to moveInterval
+    /// </summary>
     public void MoveNextSlowly()
     {
         if(stepInfosNow.Count < 0) throw new UnityException("Didn't set any point");

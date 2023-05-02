@@ -1564,7 +1564,7 @@ MonoBehaviour:
   stepOrder: 0
   step: 0
   preStep: 0
-  moveInterval: 1
+  moveInterval: 3
   catchableItems:
   - {fileID: 900169432}
   - {fileID: 2010291059}

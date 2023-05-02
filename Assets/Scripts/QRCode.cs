@@ -146,13 +146,13 @@ namespace QRTracking
             timePassed = secondsOfNow - secondsOfStamp;
             ShowError.text = timePassed.ToString();
 
-            if ((timePassed<4)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
+            if ((timePassed<2)&&(Arm.transform.rotation!=Quaternion.Euler(0,0,0)))
             {
                 Arm.transform.rotation = Quaternion.Euler(0,0,0);
                 locateCounter++;
             }
 
-            if(timePassed>=4)
+            if(timePassed>=2)
             {
                 
                 if(firstTime==0)
