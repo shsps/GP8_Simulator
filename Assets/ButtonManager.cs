@@ -19,8 +19,10 @@ public class ButtonManager : MonoBehaviour
     public int actionType = 0;
     public GameObject circle, cube;
     int x = 0;
+    int showResetFirstBtn = 0;
     [SerializeField] int y = 0;
     public PressableButton test;
+    public PressableButton reset;
     public GameObject teachingText;
     public GameObject armForTest,steps;
     public bool isPlaying = false;
@@ -168,6 +170,30 @@ public class ButtonManager : MonoBehaviour
                 steps.name = "StepManager";
                 circle.SetActive(true);
                 cube.SetActive(true);
+            });
+            reset.ButtonPressed.AddListener(() =>
+            {
+                StepManager.instance.ResetRobotArm();
+                for (int i = 0; i <= 10; i++)
+                {
+                    try
+                    {
+                        teachingText.GetComponent<TutorialBoard>().ChangeTextOrder(TutorialBoard.ChangeOrderDirection.Previous);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                ResetBtns();
+                if (showResetFirstBtn == 0)
+                {
+                    GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
+                    ButtonToPress();
+                    StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
+                    showResetFirstBtn++;
+                }
+                showResetFirstBtn = 0;
             });
         }
 
