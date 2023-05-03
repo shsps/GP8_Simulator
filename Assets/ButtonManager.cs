@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    public PressableButton[] buttonsHoloLens2 = new PressableButton[16];//教導盒
+    public PressableButton[] buttonsHoloLens2 = new PressableButton[14];//教導盒
     public GameObject teachingBoxButtonGroup;
     public List<GameObject> buttons = new List<GameObject>();
     public List<GameObject> tutorialBtn = new List<GameObject>();
@@ -18,7 +18,7 @@ public class ButtonManager : MonoBehaviour
     public PressableButton[] buttonsOfSteps = new PressableButton[4];
     public int actionType = 0;
     public GameObject circle, cube;
-    int x = 0;
+    int showFirstBtn = 0;
     int showResetFirstBtn = 0;
     [SerializeField] int y = 0;
     public PressableButton test;
@@ -61,12 +61,12 @@ public class ButtonManager : MonoBehaviour
                 {
                     ik.SearchItemCatchable(false);//Hololens button give false
                 }
-                if(b.name =="輸入")//Record current info
+                /*if(b.name =="輸入")//Record current info
                 {
                     StepManager.instance.AddStep(ik);
                     ik.IsCatchPressed = false;
                     //Record current position
-                }
+                }*/
                 if(b.name == "清除")
                 {
                     ik.init_MoveTool();
@@ -211,11 +211,11 @@ public class ButtonManager : MonoBehaviour
         {
             StepManager.instance.MoveNextSlowly();//根據設定秒數，在時間內移至指定位置
         }
-        if(x==0)
+        if(showFirstBtn==0)
         {
             GameObject.Find("StepManager").GetComponent<StepManager>().step = 0;
             ButtonToPress();
-            x++;
+            showFirstBtn++;
         }//讓開始撥放動畫時第一顆按鈕會亮
         foreach (PressableButton b in buttonsHoloLens2)//Continue
         {
@@ -242,9 +242,9 @@ public class ButtonManager : MonoBehaviour
                     case "L.Z-":
                         ik.MoveToolZ(-0.02f);//back
                         break;
-                    case "測試運轉":
+                    /*case "測試運轉":
                         StepManager.instance.MoveNextSlowly();
-                        break;
+                        break;*/
                     default:
                         print(b.name);
                         break;

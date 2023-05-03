@@ -161,15 +161,18 @@ namespace QRTracking
 
                     Circle.transform.rotation = Quaternion.Euler(90, 0, 0);
                     Cube.transform.rotation = Quaternion.Euler(90, 0, 0);
-                    Circle.transform.localPosition = new Vector3(-0.0008480051f,0.004675776f,0.004474159f);
+                    Circle.transform.localPosition = new Vector3(-0.00083f, 0.004676f, 0.004452f);
                     Cube.transform.localPosition = new Vector3(-0.000270001f,0.004675752f, 0.004481005f);
-                
+
                     StepManager.instance.ResetCatchableItemOrigin();//紀錄初始點
                     //StepManager.instance.MoveNextSlowly();//不會作用
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     //StepManager.instance.ChangeStepOrder(-1);
                     firstTime++;
                 }
+                Circle.transform.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
+                Cube.transform.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
+
             }
 
         }
