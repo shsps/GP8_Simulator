@@ -15,7 +15,6 @@ public class Cube : Catchable
         this.transform.parent = tool.transform;
         this.GetComponent<Rigidbody>().useGravity = false;
         IsCatching = true;
-        TextCollection.BackgroundText(this.name +" "+ this.GetComponent<Rigidbody>().useGravity+ " " + this.transform.parent.name);
     }
 
     public override void Release()

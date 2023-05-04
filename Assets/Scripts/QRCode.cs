@@ -168,7 +168,6 @@ namespace QRTracking
                     firstTime++;
                 }
             }
-            TextCollection.BackgroundText(Cube.GetComponent<Rigidbody>().useGravity.ToString());
         }
 
         // Update is called once per frame
