@@ -93,12 +93,10 @@ namespace QRTracking
             Base.SetActive(false);
             Arm.SetActive(false);
             Default.SetActive(false);
-
         }
 
         void UpdatePropertiesDisplay()
         {
-            
             int secondsOfNow = (DateTime.Now.Hour * 60 * 60) + (DateTime.Now.Minute * 60) + (DateTime.Now.Second);
 
             if (qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)
@@ -165,16 +163,12 @@ namespace QRTracking
                     Cube.transform.localPosition = new Vector3(-0.000270001f,0.004675752f, 0.004481005f);
 
                     StepManager.instance.ResetCatchableItemOrigin();//紀錄初始點
-                    //StepManager.instance.MoveNextSlowly();//不會作用
                     StepManager.instance.MoveDirectly(StepManager.changeStepDirection.negative);
                     //StepManager.instance.ChangeStepOrder(-1);
                     firstTime++;
                 }
-                Circle.transform.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
-                Cube.transform.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
-
             }
-
+            TextCollection.BackgroundText(Cube.GetComponent<Rigidbody>().useGravity.ToString());
         }
 
         // Update is called once per frame

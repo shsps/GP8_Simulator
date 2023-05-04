@@ -320,7 +320,7 @@ public class StepManager : MonoBehaviour
             {
                 targetStepInfo.Ik.SearchItemCatchable(false);
             }
-            //preStep = step;
+            preStep = step;
             return true;
         }
         moveIndex++;

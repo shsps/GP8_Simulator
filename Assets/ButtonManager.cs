@@ -332,7 +332,7 @@ public class ButtonManager : MonoBehaviour
         }
     }
 
-    public void GrabButtonToPress()//TODO:Insert Real Step
+    public void GrabButtonToPress()
     {
         int nowStep = GameObject.Find("StepManager").GetComponent<StepManager>().step;
         switch (nowStep)
