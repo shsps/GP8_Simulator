@@ -14,12 +14,14 @@ public class Cube : Catchable
     {
         this.transform.parent = tool.transform;
         this.GetComponent<Rigidbody>().useGravity = false;
+        this.GetComponent<Rigidbody>().velocity = Vector3.zero;
         IsCatching = true;
     }
 
     public override void Release()
     {
-        if(ParentGameObject != null)
+        this.GetComponent<Rigidbody>().useGravity = true;
+        if (ParentGameObject != null)
         {
             this.transform.parent = ParentGameObject.transform;
         }
@@ -27,7 +29,8 @@ public class Cube : Catchable
         {
             this.transform.parent = null;
         }
-        this.GetComponent<Rigidbody>().useGravity = true;
+        this.GetComponent<Rigidbody>().velocity = Vector3.zero;
         IsCatching = false;
     }
+
 }

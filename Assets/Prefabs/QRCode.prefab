@@ -351,6 +351,7 @@ MonoBehaviour:
   TestText: {fileID: 0}
   ShowError: {fileID: 434901352942704080}
   QRCodeGameObject: {fileID: 0}
+  UnityEditorTest: 0
 --- !u!114 &5292643069497550491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1673,6 +1674,7 @@ MonoBehaviour:
   step: 0
   preStep: 0
   moveInterval: 4
+  moveIndex: 0
   catchableItems:
   - {fileID: 622148980847009337}
   - {fileID: 4300733083942414833}
