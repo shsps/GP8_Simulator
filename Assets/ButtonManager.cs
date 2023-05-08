@@ -31,6 +31,8 @@ public class ButtonManager : MonoBehaviour
     [SerializeField] private Color c = Color.green;
     [SerializeField] private IKManager3D2 ik;
 
+    [SerializeField] private bool unityEditorTest = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -203,6 +205,8 @@ public class ButtonManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (unityEditorTest) return;
+
         if (ik != GameObject.Find("JointS").GetComponent<IKManager3D2>())
         {
             ik = GameObject.Find("JointS").GetComponent<IKManager3D2>();

@@ -19,7 +19,7 @@ public class StepManager : MonoBehaviour
     private bool hasReset = false;
     [Tooltip("How many second does it need from this step to next")]
     [SerializeField] private float moveInterval = 1;
-    private int moveIndex = 0;
+    [SerializeField] private int moveIndex = 0;
     private bool isRepeat = false;
     [SerializeField] private Catchable[] catchableItems;
     [SerializeField] private bool useKeyboard = false;
@@ -42,9 +42,10 @@ public class StepManager : MonoBehaviour
 
     private void Update()
     {
+        //System.Diagnostics.Debug.WriteLine(catchableItems[0].GetComponent<Rigidbody>().useGravity);
         if (!useKeyboard) return;
 
-        if(Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             MoveDirectly(changeStepDirection.positive);
         }
@@ -52,33 +53,35 @@ public class StepManager : MonoBehaviour
         {
             MoveDirectly(changeStepDirection.negative);
         }
-        else if(Input.GetKey(KeyCode.C) && !isRepeat)
+
+        if (isRepeat)
         {
             MoveNextSlowly();
         }
-        else if(Input.GetKeyDown(KeyCode.V))
+        else if (Input.GetKey(KeyCode.C) && !isRepeat)
+        {
+            MoveNextSlowly();
+        }
+
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            ResetRobotArm();
+        }
+        if (Input.GetKeyDown(KeyCode.V))
         {
             isRepeat = isRepeat ? false : true;
         }
-        else if(isRepeat)
-        {
-            MoveNextSlowly();
-        }
-        else if(Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             isThisStepRepeat = isThisStepRepeat ? false : true;
         }
-        else if(Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             ChangeStepOrder(-1);
         }
-        else if(Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             ChangeStepOrder(1);
-        }
-        else if(Input.GetKeyDown(KeyCode.P))
-        {
-            ResetRobotArm();
         }
     }
 
@@ -177,6 +180,8 @@ public class StepManager : MonoBehaviour
         InitCatchableItem();
         MoveToOrigin();
         step = 0;
+        preStep = 0;
+        moveIndex = 0;
     }
 
     //Bug : If your previous step catch an item that doesn't at the origin position,
@@ -199,7 +204,7 @@ public class StepManager : MonoBehaviour
             if(step > 0 && step < stepInfosNow.Count)
             {
                 if (stepInfosNow[step].CatchStatusNow == IKManager3D2.CatchStatus.Catch &&
-                   stepInfosNow[step - 1].CatchStatusNow == IKManager3D2.CatchStatus.None)
+                   stepInfosNow[step-1].CatchStatusNow == IKManager3D2.CatchStatus.None)
                 {
                     stepInfosNow[step].Ik.ForceReleaseItem();
                     InitCatchableItem();
@@ -211,15 +216,8 @@ public class StepManager : MonoBehaviour
         {
             ResetRobotArm();
         }
-        /*else
-        {
-            MoveToOrigin();
-        }*/
 
         MoveToOrigin();
-        #region Detect catchableItem need to be released or not
-
-        #endregion
         //print($"step : {step}");
 
         #region move from 0 to step
@@ -237,11 +235,16 @@ public class StepManager : MonoBehaviour
             targetStepInfo.Ik.MoveToolZ(deltaAngleZ);
             if (targetStepInfo.CatchStatusNow == IKManager3D2.CatchStatus.Catch && stepInfosNow[i].Ik.catchStatusNow != IKManager3D2.CatchStatus.Catch)
             {
-                targetStepInfo.Ik.SearchItemCatchable(false);
+                //BUG : The SearchItemCatchable function is written death here,
+                //because Hololens isn't fast enough to render the robot arm,
+                //robot arm will search catchable item before rendering completely
+                targetStepInfo.Ik.SearchItemCatchable(catchableItems[1]);
+                //targetStepInfo.Ik.SearchItemCatchable(false);
             }
             else if(targetStepInfo.CatchStatusNow == IKManager3D2.CatchStatus.Release && stepInfosNow[i].Ik.catchStatusNow != IKManager3D2.CatchStatus.Release)
             {
-                targetStepInfo.Ik.SearchItemCatchable(false);
+                targetStepInfo.Ik.SearchItemCatchable(catchableItems[1]);
+                //targetStepInfo.Ik.SearchItemCatchable(false);
             }
         }
         #endregion
@@ -301,6 +304,7 @@ public class StepManager : MonoBehaviour
         float rotateAngleThisTimeY = deltaAngleY / moveInterval;
         float rotateAngleThisTimeZ = deltaAngleZ / moveInterval;
 
+        //print(preStepInfo);
         //print($"{deltaAngleX}, {deltaAngleY}, {deltaAngleZ}");
         //print($"index : {moveIndex}, ({rotateAngleThisTimeX}, {rotateAngleThisTimeY}, {rotateAngleThisTimeZ})");
 
@@ -308,7 +312,6 @@ public class StepManager : MonoBehaviour
         targetStepInfo.Ik.MoveToolY(rotateAngleThisTimeY);
         targetStepInfo.Ik.MoveToolZ(rotateAngleThisTimeZ);
         
-
         if(moveIndex == moveInterval)
         {
             moveIndex = 0;

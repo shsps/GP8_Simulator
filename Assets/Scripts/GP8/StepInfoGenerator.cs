@@ -43,7 +43,7 @@ public class StepInfoGenerator : MonoBehaviour
             GameObject robotArm = GameObject.Find(group1[0].Replace(",", ""));
             if(robotArm == null)
             {
-                print($"Can not find robot arm named {group1[0]}");
+                print($"Can not find robot arm named {group1[0].Replace(",", "")}");
                 continue;
             }
             robotArm.TryGetComponent<IKManager3D2>(out IKManager3D2 _ik);

@@ -41,6 +41,8 @@ namespace QRTracking
         public GameObject QRCodeGameObject;
         int secondsOfStamp = 0;
 
+        public bool UnityEditorTest = false;
+
         // Use this for initialization
         void Start()
         {
@@ -99,7 +101,7 @@ namespace QRTracking
         {
             int secondsOfNow = (DateTime.Now.Hour * 60 * 60) + (DateTime.Now.Minute * 60) + (DateTime.Now.Second);
 
-            if (qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks)
+            if ((qrCode != null && lastTimeStamp != qrCode.SystemRelativeLastDetectedTime.Ticks) || UnityEditorTest)
             {
                 secondsOfStamp = (qrCode.LastDetectedTime.Hour * 60 * 60) + (qrCode.LastDetectedTime.Minute * 60) + (qrCode.LastDetectedTime.Second);
 

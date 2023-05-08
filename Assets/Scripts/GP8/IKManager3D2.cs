@@ -1,5 +1,6 @@
 ﻿using ArrayExtension;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -93,6 +94,7 @@ public class IKManager3D2 : MonoBehaviour
     }
 
     private CheckPoint checkPointNow;
+
 
     private void Awake()
     {
@@ -722,6 +724,34 @@ public class IKManager3D2 : MonoBehaviour
                 IsCatchPressed = true;
             }
         }
+    }
+
+    public void SearchItemCatchable(Catchable catchableItem)
+    {
+        catchItemNow = catchableItem;
+        if(!catchItemNow.IsCatching)
+        {
+            catchItemNow.Catch(joints[joints.Length - 2].gameObject);
+            catchItemNow.transform.localPosition = new Vector3(0, 0.0003406125f, 0);
+            print(catchableItem.transform.position.y - joints[joints.Length - 2].transform.position.y);
+            catchStatusNow = CatchStatus.Catch;
+            IsCatching = true;
+        }
+        else
+        {
+            StartCoroutine(ReleaseWaitSecond());
+        }
+        IsCatchPressed = true;
+    }
+
+    private IEnumerator ReleaseWaitSecond()
+    {
+        //Hololens is too slow to render, catchable item will drop at wrong place when you call the Release function.
+        //So call Release function after waiting for one frame.
+        yield return new WaitForEndOfFrame();
+        catchItemNow.Release();
+        catchStatusNow = CatchStatus.Release;
+        IsCatching = false;
     }
 
     /// <summary>
