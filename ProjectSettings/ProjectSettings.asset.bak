@@ -725,7 +725,10 @@ PlayerSettings:
       InternetClient: True
       CodeGeneration: False
       BackgroundMediaPlayback: False
+<<<<<<< HEAD
+=======
       EnterpriseAuthentication: False
+>>>>>>> 59bac3b1de4c3e3fea7ea095a8112a34c305e3c1
   metroTargetDeviceFamilies:
     Desktop: False
     Holographic: False
